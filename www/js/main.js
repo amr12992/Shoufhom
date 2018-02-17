@@ -1,9 +1,6 @@
 var SERVER_URL = 'http://ShoufhomNode-iam688687.codeanyapp.com:3000';
 
-var page = document.querySelector('ons-template');
-
-var login = function() {
-    
+var signIn = function() {  
   var loginCredentials = {
     username: document.getElementById('username').value,
     password: document.getElementById('password').value
