@@ -8,9 +8,24 @@ var signIn = function() {
   
   $.post(SERVER_URL + '/login', loginCredentials,
     function (data) {
-      if (data == 'success') {
-        ons.notification.alert('Login success!');
-        fn.load('home.html');
+      if (data != "incorrect") {
+      	console.log(data.userRole);
+        ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000});
+        
+        switch (data.userRole) {
+        	case 'Guardian':
+        		fn.load('guardianHome.html');
+        		break;
+        
+        	case 'Teacher':
+        		fn.load('teacherHome.html');
+        		break;
+        		
+        	case 'Counsellor':
+        		fn.load('counsellorHome.html');
+        		break;
+        }
+        
       } else {
         ons.notification.alert('Incorrect login');
       }
