@@ -53,23 +53,74 @@
         </ons-list>
       </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content id="content" page="TsignUp.html"></ons-splitter-content>
+    <ons-splitter-content id="content" page="signIn.html"></ons-splitter-content>
   </ons-splitter>
 
-  <ons-template id="login.html">
+  <ons-template id="signIn.html">
     <ons-page id="signIn">
         <ons-toolbar>
             <div class="center"style="text-align: center">Sign in</div>
         </ons-toolbar>
       <div style="text-align: center; margin-top: 30px;">
         <p>
-          <ons-input id="username" modifier="underbar" placeholder="Username" float style="width: 70%;"></ons-input>
+          <ons-input id="signIn_civilID" modifier="underbar" placeholder="Civil ID" float style="width: 70%;"></ons-input>
         </p>
         <p>
-          <ons-input id="password" modifier="underbar" type="password" placeholder="Password" float style="width: 70%;"></ons-input>
+          <ons-input id="signIn_password" modifier="underbar" type="password" placeholder="Password" float style="width: 70%;"></ons-input>
         </p>
         <p style="margin-top: 30px;">
           <ons-button style="width: 50%;" onclick="signIn()">Sign in</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  
+  <!-- Guardian sign up  -->
+  
+  
+  <ons-template id="signUp.html">
+    <ons-page id="signUp">
+        <ons-toolbar>
+            <div class="center"style="text-align: center">Sign up</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 40px;">
+        <p>
+          <ons-input id="signUp_fName" modifier="underbar" placeholder="First Name" float style="width: 70%;"></ons-input>
+        </p>
+        <p>
+          <ons-input id="signUp_mName" modifier="underbar" placeholder="Middle Name" float style="width: 70%;"></ons-input>
+        </p>
+        <p>
+          <ons-input id="signUp_lName" modifier="underbar" placeholder="Last Name" float style="width: 70%;"></ons-input>
+        </p>
+        <p>
+          <ons-input id="signUp_civilID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="signUp_phone" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="signUp_mobile" modifier="underbar"  placeholder="Mobile number" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="signUp_email" modifier="underbar"  placeholder="E-mail" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="signUp_password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="signUp_cpassword" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+     
+        <p style="margin-top: 50px;">
+          <ons-button style="width: 50%;" onclick="signUp()">Confirm</ons-button>
         </p>
       </div>
     </ons-page>
@@ -92,7 +143,7 @@
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
         Teacher home
       </h1>
-      <ons-list>
+      <ons-list class="mainMenuButtonList">
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
             Exam times
           </ons-button>
@@ -135,7 +186,7 @@
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
         Counsellor home
       </h1>
-      <ons-list>
+      <ons-list class="mainMenuButtonList">
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
             Exam times
           </ons-button>
@@ -181,7 +232,7 @@
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
         Guardian home
       </h1>
-      <ons-list>
+      <ons-list class="mainMenuButtonList">
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
             Exam times
           </ons-button>
@@ -230,97 +281,6 @@
     </ons-toolbar>
   </ons-page>
   </ons-template>
-  
-  
-  
-  <!-- Guardian sign up  -->
-  
-  
-  <ons-template id="GsignUp.html">
-    <ons-page id="GsignUp">
-        <ons-toolbar>
-            <div class="center"style="text-align: center">Sign up</div>
-        </ons-toolbar>
-      <div style="text-align: center; margin-top: 80px;">
-        <p>
-          <ons-input id="Name" modifier="underbar" placeholder="Name" float style="width: 70%;"></ons-input>
-        </p>
-        <p>
-          <ons-input id="Civil ID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Phone number" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Email" modifier="underbar"  placeholder="Email" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Confirm Password" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
-        </p>
-        
-     
-        <p style="margin-top: 50px;">
-          <ons-button style="width: 50%;" onclick="signIn()">Confirm</ons-button>
-        </p>
-      </div>
-    </ons-page>
-  </ons-template>
-  
-  
-  
-  <!-- Teacher sign up  -->
-  
-  
-  <ons-template id="TsignUp.html">
-    <ons-page id="TsignUp">
-        <ons-toolbar>
-            <div class="center"style="text-align: center">Sign up</div>
-        </ons-toolbar>
-      <div style="text-align: center; margin-top: 80px;">
-        <p>
-          <ons-input id="Name" modifier="underbar" placeholder="Name" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="School" modifier="underbar" placeholder="School" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Civil ID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Phone number" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Email" modifier="underbar"  placeholder="Email" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="Confirm Password" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
-        </p>
-        
-     
-        <p style="margin-top: 50px;">
-          <ons-button style="width: 50%;" onclick="signIn()">Confirm</ons-button>
-        </p>
-      </div>
-    </ons-page>
-  </ons-template>
-  
-  
   
 
 </body>
