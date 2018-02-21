@@ -8,7 +8,7 @@ var signIn = function() {
   
   $.post(SERVER_URL + '/login', loginCredentials,
     function (data) {
-      if (data != "incorrect") {
+      if (data.userRole) {
       	console.log(data.userRole);
         ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000});
         
@@ -27,7 +27,7 @@ var signIn = function() {
         }
         
       } else {
-        ons.notification.alert('Incorrect login');
+        ons.notification.alert('Incorrect login information');
       }
     }).fail(function (error) {
     ons.notification.alert('Connection error');
