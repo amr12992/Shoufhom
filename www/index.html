@@ -53,7 +53,7 @@
         </ons-list>
       </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content id="content" page="login.html"></ons-splitter-content>
+    <ons-splitter-content id="content" page="TsignUp.html"></ons-splitter-content>
   </ons-splitter>
 
   <ons-template id="login.html">
@@ -230,6 +230,98 @@
     </ons-toolbar>
   </ons-page>
   </ons-template>
+  
+  
+  
+  <!-- Guardian sign up  -->
+  
+  
+  <ons-template id="GsignUp.html">
+    <ons-page id="GsignUp">
+        <ons-toolbar>
+            <div class="center"style="text-align: center">Sign up</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 80px;">
+        <p>
+          <ons-input id="Name" modifier="underbar" placeholder="Name" float style="width: 70%;"></ons-input>
+        </p>
+        <p>
+          <ons-input id="Civil ID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Phone number" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Email" modifier="underbar"  placeholder="Email" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Confirm Password" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+     
+        <p style="margin-top: 50px;">
+          <ons-button style="width: 50%;" onclick="signIn()">Confirm</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  
+  
+  <!-- Teacher sign up  -->
+  
+  
+  <ons-template id="TsignUp.html">
+    <ons-page id="TsignUp">
+        <ons-toolbar>
+            <div class="center"style="text-align: center">Sign up</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 80px;">
+        <p>
+          <ons-input id="Name" modifier="underbar" placeholder="Name" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="School" modifier="underbar" placeholder="School" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Civil ID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Phone number" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Email" modifier="underbar"  placeholder="Email" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input id="Confirm Password" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+     
+        <p style="margin-top: 50px;">
+          <ons-button style="width: 50%;" onclick="signIn()">Confirm</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  
+  
 
 </body>
 </html>
