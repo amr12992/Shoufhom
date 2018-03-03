@@ -26,6 +26,30 @@ document.addEventListener('init', function(event) {
   }
 });
 
+var goToHome = function() {
+	var userRole = localStorage.getItem('userRole');
+        
+        switch (userRole) {
+        	case 'Guardian':
+        		fn.load('guardianHome.html');
+        		break;
+        
+        	case 'Teacher':
+        		fn.load('teacherHome.html');
+        		break;
+        		
+        	case 'Counsellor':
+        		fn.load('counsellorHome.html');
+        		break;
+        }
+}
+
+var signOut = function() {
+	localStorage.clear();
+	fn.load('signIn.html');
+	ons.notification.toast('Signed out', {timeout: 4000});
+}
+
 var signIn = function() {  
   var loginCredentials = {
     civilID: document.getElementById('signIn_civilID').value,
@@ -39,11 +63,14 @@ var signIn = function() {
       	
       	localStorage.setItem('civilID', loginCredentials.civilID);
       	localStorage.setItem('password', loginCredentials.password);
+      	localStorage.setItem('userRole', data.userRole);
       	localStorage.setItem('isSignedIn', "yes");
       	
         ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000});
         
-        switch (data.userRole) {
+        var userRole = localStorage.getItem('userRole');
+        
+        switch (userRole) {
         	case 'Guardian':
         		fn.load('guardianHome.html');
         		break;
@@ -93,11 +120,14 @@ var signUp = function() {
       	
       	localStorage.setItem('civilID', newInfo.civilID);
       	localStorage.setItem('password', newInfo.password);
+      	localStorage.setItem('userRole', data.userRole);
       	localStorage.setItem('isSignedIn', "yes");
       	
         ons.notification.toast('Signup success, welcome ' + data.fName + '!', {timeout: 4000});
         
-        switch (data.userRole) {
+        var userRole = localStorage.getItem('userRole');
+        
+        switch (userRole) {
         	case 'Guardian':
         		fn.load('guardianHome.html');
         		break;

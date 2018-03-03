@@ -38,16 +38,16 @@
 </head>
 <body>
   <ons-splitter>
-    <ons-splitter-side id="menu" side="left" width="220px" collapse>
+    <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
       <ons-page>
         <ons-list>
-          <ons-list-item onclick="fn.load('home.html')" tappable>
+          <ons-list-item onclick="goToHome()" tappable>
             Home
           </ons-list-item>
           <ons-list-item onclick="fn.load('settings.html')" tappable>
             Settings
           </ons-list-item>
-          <ons-list-item onclick="fn.load('about.html')" tappable>
+          <ons-list-item onclick="signOut()" tappable>
             Log out
           </ons-list-item>
         </ons-list>
