@@ -2,5 +2,10 @@
 
 .mainMenuButton {
 	margin-top: 10px;
-	border-radius: 5px;	
+	border-radius: 5px;
+	width: 70%;
+}
+
+.mainMenuButtonList {
+	text-align: center;
 }
