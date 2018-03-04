@@ -53,7 +53,7 @@
         </ons-list>
       </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content id="content" page="signIn.html"></ons-splitter-content>
+    <ons-splitter-content id="content" page="accessReports.html"></ons-splitter-content>
   </ons-splitter>
   
   <ons-template id="signIn.html">
@@ -252,6 +252,8 @@
     </ons-page>
   </ons-template>
   
+   <!-- exam times page -->
+  
   <ons-template id="examTimes.html">
     <ons-page id="examTimes">
       <ons-toolbar>
@@ -279,6 +281,113 @@
       </p>
     </ons-page>
   </ons-template>
+  
+  <!-- Check upcoming appointments page -->
+  
+  <ons-template id="checkUppcomingAppointments.html">
+    <ons-page id="checkUppcomingAppointments">
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+         Check upcoming appointments
+        </div>
+      </ons-toolbar>
+      <div id="upcommingAppointmentsTable" style="text-align: center; margin-top: 30px;">
+    	<ons-row>
+			<ons-col class="tableHead">
+				Name
+			</ons-col>
+            <ons-col class="tableHead">
+    			Time
+			</ons-col>
+			<ons-col class="tableHead">
+				Date
+			</ons-col>
+		</ons-row>
+      </div>
+      <p style="margin-top: 50px; text-align: center;">
+          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+      </p>
+    </ons-page>
+  </ons-template>
+  
+  
+    <!-- Access Reports page -- conseller based -->
+    
+      <ons-template id="accessReports.html">
+
+      
+    <ons-page id="accessReports">
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+         Access Reports
+        </div>
+        
+      </ons-toolbar>
+      
+      <h4 style=" margin-top: 30px;">select terms:</h4>
+            <ons-select id="choose-sel" onchange="editSelects(event)"  style="text-align: center; margin-top: 1px;width: 70%;" >
+            <option value="basic">term1</option>
+            <option value="material">term2</option>
+            <option value="underbar">term3</option>
+            </ons-select>
+      <div id="accessReportTable" style="text-align: center; margin-top: 30px;">
+        <ons-row>
+			<ons-col class="tableHead">
+				Grade level
+			</ons-col>
+            <ons-col class="tableHead">
+    			Class number 
+			</ons-col>
+             <ons-col class="tableHead">
+        		Teacher
+			</ons-col>
+			<ons-col class="tableHead">
+				absences
+			</ons-col>
+            <ons-col class="tableHead">
+    			gradebreakdown
+			</ons-col>
+           
+		</ons-row>
+      </div>
+      <p style="margin-top: 50px; text-align: center;">
+          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+      </p>
+    </ons-page>
+  </ons-template>
+  
+  <!-- counsellor ID search -- Access reports -->
+  <ons-template id="counsellerIdSearch.html">
+    <ons-page id="counsellerIdSearch">
+        <ons-toolbar>
+            <div class="center"style="text-align: center">Access Reports</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 100px;">
+        
+        <h3>Enter the student ID:</h3>
+        <p>
+          <ons-input id="CounsellorIdSearch" modifier="underbar" placeholder="Student ID" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p style="margin-top: 70px;">
+          <ons-button style="width: 50%;" onclick="">submit</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  
+  <!-- ................... -->
 
   <ons-template id="settings.html">
   <ons-page>
