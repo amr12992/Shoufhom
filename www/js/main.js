@@ -1,4 +1,4 @@
-var SERVER_URL = 'https://ShoufhomNode-iam688687.codeanyapp.com';
+var SERVER_URL = 'http://ShoufhomNode-iam688687.codeanyapp.com:3000';
 
 // Dump all localStorage
 
@@ -154,28 +154,88 @@ var signUp = function() {
 var fillTimeTable = function() {
 	var table = document.getElementById('examTimeTable');
 	
-	var examTimesRequest {
+	var examTimesRequest = {
 		userID: localStorage.getItem('userID'),
 		userRole: localStorage.getItem('userRole')
-	}
+	};
 	
-	$.post(SERVER_URL + '/examtimes', newInfo,
+	$.post(SERVER_URL + '/examtimes', examTimesRequest,
     	function (data) {
-    		//if (examTimesRequest.userRole == )
+    		if (examTimesRequest.userRole == 'Counsellor') {
+    			
+    			for (var i = 0; i < data.length(); i++) {
+    				table.innerHTML += '<ons-row><ons-col>' + data[i].examName + '</ons-col><ons-col>' + data[i].examTime + '</ons-col></ons-row>';
+    			}
+    			
+    		}
+    		else {
+    			
+    			table.innerHTML = '<ons-row>' + 
+								  	'<ons-col class="tableHead">' +
+										 'Exam'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Class'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Date'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Time'+
+									'</ons-col>' +
+								 '</ons-row>';
+    			
+    		}
     	
     }).fail(function (error) {
     ons.notification.alert('Connection error');
   });
 	
-	table.innerHTML += 
-		'<ons-row>' + 
-			'<ons-col>' +
-				'test' +
-			'</ons-col>' +
-			'<ons-col>' +
-				'123' +
-			'</ons-col>' +
-		'</ons-row>';
 		
 	//console.log(table.innerHTML);
-}
+};
+
+/*
+var fillTimeTable = function() {
+	var table = document.getElementById('examTimeTable');
+	
+	var examTimesRequest = {
+		userID: localStorage.getItem('userID'),
+	};
+	
+	$.post(SERVER_URL + '/examtimes', examTimesRequest,
+    	function (data) {
+    		if (examTimesRequest.userRole == 'Counsellor') {
+    			
+    			for (var i = 0; i < data.length(); i++) {
+    				table.innerHTML += '<ons-row><ons-col>' + data[i].examName + '</ons-col><ons-col>' + data[i].examTime + '</ons-col></ons-row>';
+    			}
+    			
+    		}
+    		else {
+    			
+    			table.innerHTML = '<ons-row>' + 
+								  	'<ons-col class="tableHead">' +
+										 'Exam'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Class'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Date'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Time'+
+									'</ons-col>' +
+								 '</ons-row>';
+    			
+    		}
+    	
+    }).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
+*/
