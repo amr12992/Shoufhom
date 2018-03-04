@@ -161,9 +161,9 @@ var fillTimeTable = function() {
 	
 	$.post(SERVER_URL + '/examtimes', examTimesRequest,
     	function (data) {
-    		if (examTimesRequest.userRole == 'Counsellor') {
+    		if (examTimesRequest.userRole == 'Guardian') {
     			
-    			for (var i = 0; i < data.length(); i++) {
+    			for (var i = 0; i < data.length; i++) {
     				table.innerHTML += '<ons-row><ons-col>' + data[i].examName + '</ons-col><ons-col>' + data[i].examTime + '</ons-col></ons-row>';
     			}
     			
