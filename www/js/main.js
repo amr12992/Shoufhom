@@ -1,4 +1,4 @@
-var SERVER_URL = 'http://ShoufhomNode-iam688687.codeanyapp.com:3000';
+var SERVER_URL = 'https://ShoufhomNode-iam688687.codeanyapp.com';
 
 // Dump all localStorage
 
@@ -64,6 +64,7 @@ var signIn = function() {
       	localStorage.setItem('civilID', loginCredentials.civilID);
       	localStorage.setItem('password', loginCredentials.password);
       	localStorage.setItem('userRole', data.userRole);
+      	localStorage.setItem('userID', data.userID);
       	localStorage.setItem('isSignedIn', "yes");
       	
         ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000});
@@ -121,6 +122,7 @@ var signUp = function() {
       	localStorage.setItem('civilID', newInfo.civilID);
       	localStorage.setItem('password', newInfo.password);
       	localStorage.setItem('userRole', data.userRole);
+      	localStorage.setItem('userID', data.userID);
       	localStorage.setItem('isSignedIn', "yes");
       	
         ons.notification.toast('Signup success, welcome ' + data.fName + '!', {timeout: 4000});
@@ -148,3 +150,32 @@ var signUp = function() {
     ons.notification.alert('Connection error');
   });
 };
+
+var fillTimeTable = function() {
+	var table = document.getElementById('examTimeTable');
+	
+	var examTimesRequest {
+		userID: localStorage.getItem('userID'),
+		userRole: localStorage.getItem('userRole')
+	}
+	
+	$.post(SERVER_URL + '/examtimes', newInfo,
+    	function (data) {
+    		//if (examTimesRequest.userRole == )
+    	
+    }).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+	
+	table.innerHTML += 
+		'<ons-row>' + 
+			'<ons-col>' +
+				'test' +
+			'</ons-col>' +
+			'<ons-col>' +
+				'123' +
+			'</ons-col>' +
+		'</ons-row>';
+		
+	//console.log(table.innerHTML);
+}

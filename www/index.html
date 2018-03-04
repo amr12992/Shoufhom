@@ -55,7 +55,7 @@
     </ons-splitter-side>
     <ons-splitter-content id="content" page="signIn.html"></ons-splitter-content>
   </ons-splitter>
-
+  
   <ons-template id="signIn.html">
     <ons-page id="signIn">
         <ons-toolbar>
@@ -187,7 +187,7 @@
         Counsellor home
       </h1>
       <ons-list class="mainMenuButtonList">
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
             Exam times
           </ons-button>
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
@@ -249,6 +249,34 @@
             Switch active student
           </ons-button>
       </ons-list>
+    </ons-page>
+  </ons-template>
+  
+  <ons-template id="examTimes.html">
+    <ons-page id="examTimes">
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Exam times
+        </div>
+      </ons-toolbar>
+      <div id="examTimeTable" style="text-align: center; margin-top: 30px;">
+		<ons-row>
+			<ons-col class="tableHead">
+				header1
+			</ons-col>
+			<ons-col class="tableHead">
+				header2
+			</ons-col>
+		</ons-row>
+      </div>
+      <p style="margin-top: 50px; text-align: center;">
+          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+      </p>
     </ons-page>
   </ons-template>
 
