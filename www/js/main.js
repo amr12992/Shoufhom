@@ -13,7 +13,7 @@ if (localStorage.length) {
 console.log(output);
 
 
-// This is executed when the signIn page initializes
+// This is executed whenever a page initializes
 
 document.addEventListener('init', function(event) {
   var page = event.target;
@@ -24,9 +24,14 @@ document.addEventListener('init', function(event) {
     	signIn();
     }
   }
+  else if (page.matches('#examTimes'))
+  	fillExamTimeTable();
+  	
+  else if (page.matches('#checkUpcomingAppointments'))
+  	fillUpcomingAppointmentsTable();
 });
 
-var goToHome = function() {
+function goToHome() {
 	var userRole = localStorage.getItem('userRole');
         
         switch (userRole) {
@@ -44,13 +49,13 @@ var goToHome = function() {
         }
 }
 
-var signOut = function() {
+function signOut() {
 	localStorage.clear();
 	fn.load('signIn.html');
 	ons.notification.toast('Signed out', {timeout: 4000});
 }
 
-var signIn = function() {  
+function signIn() {  
   var loginCredentials = {
     civilID: document.getElementById('signIn_civilID').value,
     password: document.getElementById('signIn_password').value
@@ -93,7 +98,7 @@ var signIn = function() {
   });
 };
 
-var signUp = function() {
+function signUp() {
 	
   var password = document.getElementById('signUp_password').value;
   var cpassword = document.getElementById('signUp_cpassword').value;
@@ -151,20 +156,40 @@ var signUp = function() {
   });
 };
 
-var fillTimeTable = function() {
+function parseDateTime(sqlDateTime) {
+	var dateTime = String(sqlDateTime).substr(0, 19);
+    dateTime = dateTime.replace(/T|Z/gi, ' ');  
+    dateTime = dateTime.split(/[- :]/);
+    var utcDate = new Date(Date.UTC(dateTime[0], dateTime[1]-1, dateTime[2], dateTime[3], dateTime[4], dateTime[5]));
+	return utcDate;
+};
+
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function fillExamTimeTable() {
 	var table = document.getElementById('examTimeTable');
 	
-	var examTimesRequest = {
+	var request = {
 		userID: localStorage.getItem('userID'),
 		userRole: localStorage.getItem('userRole')
 	};
 	
-	$.post(SERVER_URL + '/examtimes', examTimesRequest,
-    	function (data) {
-    		if (examTimesRequest.userRole == 'Guardian') {
+	$.post(SERVER_URL + '/examtimes', request,
+    	function (data) {		
+    		if (request.userRole == 'Guardian') {
     			
     			for (var i = 0; i < data.length; i++) {
-    				table.innerHTML += '<ons-row><ons-col>' + data[i].examName + '</ons-col><ons-col>' + data[i].examTime + '</ons-col></ons-row>';
+                    
+                    var date = parseDateTime(data[i].examTime1);
+
+    				table.innerHTML += '<ons-row><ons-col>' + data[i].subjectName +
+    				'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
+    				'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
+    				'</ons-col></ons-row>';
     			}
     			
     		}
@@ -184,9 +209,51 @@ var fillTimeTable = function() {
 										 'Time'+
 									'</ons-col>' +
 								 '</ons-row>';
+								 
+				for (var i = 0; i < data.length; i++) {
+                    
+                    var date = parseDateTime(data[i].examTime1);
+                    
+    				table.innerHTML += '<ons-row><ons-col>' + data[i].subjectName +
+    				'</ons-col><ons-col>' + data[i].gradeLevel + '-' + data[i].classNumber +
+    				'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
+    				'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
+    				'</ons-col></ons-row>';
+    			}
     			
     		}
     	
+    }).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+};
+
+
+function fillUpcomingAppointmentsTable() {
+	var table = document.getElementById('upcomingAppointmentsTable');
+	
+	var request = {
+		userID: localStorage.getItem('userID'),
+		userRole: localStorage.getItem('userRole')
+	};
+	
+	$.post(SERVER_URL + '/checkappointments', request,
+    	function (data) {
+    		
+    		if (!data[0]) {
+    			ons.notification.toast('You have no upcoming appointments.', {timeout: 2000});
+    			goToHome();
+    		}
+    			
+    		for (var i = 0; i < data.length; i++) {
+    			
+    			var date = parseDateTime(data[i].meetingTime);
+    			
+    			table.innerHTML += '<ons-row><ons-col>' + data[i].fName + ' ' + data[i].lName +
+    			'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
+    			'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
+    			'</ons-col></ons-row>';
+    		}
     }).fail(function (error) {
     ons.notification.alert('Connection error');
   });
@@ -195,42 +262,99 @@ var fillTimeTable = function() {
 	//console.log(table.innerHTML);
 };
 
-/*
-var fillTimeTable = function() {
-	var table = document.getElementById('examTimeTable');
+function openReportsPage() {
 	
-	var examTimesRequest = {
-		userID: localStorage.getItem('userID'),
-	};
+	userRole = localStorage.getItem('userRole');
 	
-	$.post(SERVER_URL + '/examtimes', examTimesRequest,
+	if (userRole == 'Guardian') {
+		initReportsPage();
+	}
+	else {
+		fn.load('reports_studentID_page.html');
+	}
+}
+
+function reportStudentID() {
+	studentIdInput = document.getElementById('reports_studentID_input');
+	student = studentIdInput.value;
+	
+	console.log(student);
+	
+	var request = {
+		studentID: student
+	}
+	
+	$.post(SERVER_URL + '/checkstudentid', request,
     	function (data) {
-    		if (examTimesRequest.userRole == 'Counsellor') {
-    			
-    			for (var i = 0; i < data.length(); i++) {
-    				table.innerHTML += '<ons-row><ons-col>' + data[i].examName + '</ons-col><ons-col>' + data[i].examTime + '</ons-col></ons-row>';
-    			}
+    		console.log(data);
+    		if (data == 'invalid_student') {
+    			ons.notification.alert('Invalid student ID.');
+    			studentIdInput.value = "";
     			
     		}
     		else {
-    			
-    			table.innerHTML = '<ons-row>' + 
-								  	'<ons-col class="tableHead">' +
-										 'Exam'+
-									'</ons-col>' +
-									'<ons-col class="tableHead">' +
-										 'Class'+
-									'</ons-col>' +
-									'<ons-col class="tableHead">' +
-										 'Date'+
-									'</ons-col>' +
-									'<ons-col class="tableHead">' +
-										 'Time'+
-									'</ons-col>' +
-								 '</ons-row>';
-    			
+    			localStorage.setItem('counsellorStudentID', student);
+    			initReportsPage(student);
     		}
-    	
+    		
+    		
+    }).fail(function (error) {
+    	ons.notification.alert('Connection error');
+  	});
+}
+
+function initReportsPage(student) {
+	fn.load('reports_page.html');
+	
+  	var request = {
+  		userID: localStorage.getItem('userID'),
+  		studentID: student
+  	}
+  	
+  	$.post(SERVER_URL + '/getyears', request,
+    	function (data) {
+    			var select = document.getElementById('reportsYearSelect');
+
+	    		for (var i = 0; i < data.length; i++) {
+	    			select.innerHTML += '<option value="' + data[i].termYear + '">' + data[i].termYear +'</option>';
+	    		}
+	    		fillReportsTable(select.value, student);
+	    		
+	    	}).fail(function (error) {
+	    	ons.notification.alert('Connection error');
+  		});
+}
+
+function updateReportsTable() {
+	var select = document.getElementById('reportsYearSelect');
+	var table = document.getElementById('reportsTable');
+	
+	table.innerHTML = '';
+	
+	var studentID = localStorage.getItem('counsellorStudentID');
+	
+	fillReportsTable(select.value, studentID);
+}
+
+function fillReportsTable(term, student) {
+	var table = document.getElementById('reportsTable');
+	
+	var request = {
+		termYear: term,
+		userID: localStorage.getItem('userID'),
+		studentID: student
+	};
+	
+	$.post(SERVER_URL + '/gradereports', request,
+    	function (data) {
+    		for (var i = 0; i < data.length; i++) {
+
+    			table.innerHTML += '<ons-row><ons-col>' + data[i].subjectName +
+    			'</ons-col><ons-col>' + data[i].gradeLevel + '-' + data[i].classNumber +
+    			'</ons-col><ons-col>' + data[i].fName + ' ' + data[i].lName +
+    			'</ons-col><ons-col>' + data[i].grade1 +
+    			'</ons-col></ons-row>';
+    		}
     }).fail(function (error) {
     ons.notification.alert('Connection error');
   });
@@ -238,4 +362,18 @@ var fillTimeTable = function() {
 		
 	//console.log(table.innerHTML);
 };
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

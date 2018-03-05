@@ -137,17 +137,17 @@
           </ons-toolbar-button>
         </div>
         <div class="center">
-          Main
+          Shoufhom
         </div>
       </ons-toolbar>
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
         Teacher home
       </h1>
       <ons-list class="mainMenuButtonList">
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
             Exam times
           </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
             Upcoming appointments
           </ons-button>
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
@@ -180,7 +180,7 @@
           </ons-toolbar-button>
         </div>
         <div class="center">
-          Main
+          Shoufhom
         </div>
       </ons-toolbar>
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
@@ -190,10 +190,10 @@
       	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
             Exam times
           </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
             Upcoming appointments
           </ons-button>
-          <ons-button class="mainMenuButton" modifier="large" onclick="">
+          <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
             Student grade reports
           </ons-button>
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
@@ -226,20 +226,20 @@
           </ons-toolbar-button>
         </div>
         <div class="center">
-          Main
+          Shoufhom
         </div>
       </ons-toolbar>
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
         Guardian home
       </h1>
       <ons-list class="mainMenuButtonList">
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
             Exam times
           </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
             Upcoming appointments
           </ons-button>
-          <ons-button class="mainMenuButton" modifier="large" onclick="">
+          <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
             Student grade reports
           </ons-button>
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
@@ -269,23 +269,26 @@
       <div id="examTimeTable" style="text-align: center; margin-top: 30px;">
 		<ons-row>
 			<ons-col class="tableHead">
-				header1
+				Subject
 			</ons-col>
 			<ons-col class="tableHead">
-				header2
+				Date
+			</ons-col>
+			<ons-col class="tableHead">
+				Time
 			</ons-col>
 		</ons-row>
       </div>
       <p style="margin-top: 50px; text-align: center;">
-          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+          <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
       </p>
     </ons-page>
   </ons-template>
   
   <!-- Check upcoming appointments page -->
   
-  <ons-template id="checkUppcomingAppointments.html">
-    <ons-page id="checkUppcomingAppointments">
+  <ons-template id="checkUpcomingAppointments.html">
+    <ons-page id="checkUpcomingAppointments">
       <ons-toolbar>
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
@@ -293,35 +296,33 @@
           </ons-toolbar-button>
         </div>
         <div class="center">
-         Check upcoming appointments
+         Upcoming Appointments
         </div>
       </ons-toolbar>
-      <div id="upcommingAppointmentsTable" style="text-align: center; margin-top: 30px;">
+      <div id="upcomingAppointmentsTable" style="text-align: center; margin-top: 30px;">
     	<ons-row>
 			<ons-col class="tableHead">
 				Name
 			</ons-col>
             <ons-col class="tableHead">
-    			Time
+    			Date
 			</ons-col>
 			<ons-col class="tableHead">
-				Date
+				Time
 			</ons-col>
 		</ons-row>
       </div>
       <p style="margin-top: 50px; text-align: center;">
-          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+          <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
       </p>
     </ons-page>
   </ons-template>
   
   
-    <!-- Access Reports page -- conseller based -->
+    <!-- Access Reports page -- counseller based -->
     
-      <ons-template id="accessReports.html">
-
-      
-    <ons-page id="accessReports">
+    <ons-template id="reports_page.html">
+    <ons-page id="reports_page">
       <ons-toolbar>
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
@@ -329,20 +330,19 @@
           </ons-toolbar-button>
         </div>
         <div class="center">
-         Access Reports
+         Reports
         </div>
       </ons-toolbar>
       
-      <h4 style=" margin-top: 30px;">select terms:</h4>
-            <ons-select id="choose-sel" onchange="editSelects(event)"  style="text-align: center; margin-top: 1px;width: 70%;" >
-            <option value="basic">term1</option>
-            <option value="material">term2</option>
-            <option value="underbar">term3</option>
+      <h4 style=" margin-top: 30px;">Select year:</h4>
+            <ons-select onchange="editSelects(event)"  style="text-align: center; margin-top: 1px;width: 70%;" >
+	            <select id="reportsYearSelect" class="select-input">
+				</select>
             </ons-select>
-      <div id="accessReportTable" style="text-align: center; margin-top: 30px;">
+      <div style="text-align: center; margin-top: 30px; float: ;">
         <ons-row>
 			<ons-col class="tableHead">
-				Grade level
+				Subject
 			</ons-col>
             <ons-col class="tableHead">
     			Class number 
@@ -350,36 +350,43 @@
              <ons-col class="tableHead">
         		Teacher
 			</ons-col>
-			<ons-col class="tableHead">
-				absences
-			</ons-col>
             <ons-col class="tableHead">
-    			gradebreakdown
+    			Grade
 			</ons-col>
-           
 		</ons-row>
+		<div id="reportsTable">
+        
+      	</div>
       </div>
       <p style="margin-top: 50px; text-align: center;">
-          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+      	<ons-button style="width: 50%;" onclick="updateReportsTable()">Update</ons-button>
+      </p>
+      <p style="margin-top: 20px; text-align: center;">
+      	<ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
       </p>
     </ons-page>
   </ons-template>
   
-  <!-- counsellor ID search -- Access reports -->
-  <ons-template id="counsellerIdSearch.html">
-    <ons-page id="counsellerIdSearch">
+  <!-- Student ID search -- Access reports -->
+  <ons-template id="reports_studentID_page.html">
+    <ons-page id="reports_studentID_page">
         <ons-toolbar>
-            <div class="center"style="text-align: center">Access Reports</div>
+        	<div class="left">
+          		<ons-toolbar-button onclick="fn.open()">
+            		<ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          		</ons-toolbar-button>
+        	</div>
+            <div class="center">Access Reports</div>
         </ons-toolbar>
       <div style="text-align: center; margin-top: 100px;">
         
         <h3>Enter the student ID:</h3>
         <p>
-          <ons-input id="CounsellorIdSearch" modifier="underbar" placeholder="Student ID" float style="width: 70%;"></ons-input>
+          <ons-input id="reports_studentID_input" modifier="underbar" placeholder="Student ID" float style="width: 70%;"></ons-input>
         </p>
         
         <p style="margin-top: 70px;">
-          <ons-button style="width: 50%;" onclick="">submit</ons-button>
+          <ons-button style="width: 50%;" onclick="reportStudentID()">Submit</ons-button>
         </p>
       </div>
     </ons-page>
