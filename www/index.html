@@ -70,6 +70,12 @@
         </p>
         <p style="margin-top: 30px;">
           <ons-button style="width: 50%;" onclick="signIn()">Sign in</ons-button>
+          <div id="signInProgress"></div>
+        </p>
+        
+        <p style="margin-top: 30px;">
+          Don't have an account?<br>
+          <ons-button style="width: 50%;" onclick="fn.load('signUp.html')">Sign up</ons-button>
         </p>
       </div>
     </ons-page>
@@ -122,6 +128,11 @@
         <p style="margin-top: 50px;">
           <ons-button style="width: 50%;" onclick="signUp()">Confirm</ons-button>
         </p>
+        
+        <p style="margin-top: 20px;">
+          <ons-button style="width: 50%;" onclick="fn.load('signIn.html')">Cancel</ons-button>
+        </p>
+        
       </div>
     </ons-page>
   </ons-template>

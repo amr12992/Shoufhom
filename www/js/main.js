@@ -55,11 +55,24 @@ function signOut() {
 	ons.notification.toast('Signed out', {timeout: 4000});
 }
 
-function signIn() {  
+function signIn() {
+	
+  var civilIDInput = document.getElementById('signIn_civilID');
+  var passwordInput = document.getElementById('signIn_password');
+  
+  if (!civilIDInput.value || !passwordInput.value) {
+  	ons.notification.alert('Please complete the form');
+  	return;
+  }
+  
   var loginCredentials = {
-    civilID: document.getElementById('signIn_civilID').value,
-    password: document.getElementById('signIn_password').value
+    civilID: civilIDInput.value,
+    password: passwordInput.value
   };
+  
+  var progressBar = document.getElementById('signInProgress');
+  
+  progressBar.innerHTML += '<ons-progress-bar indeterminate></ons-progress-bar>';
   
   $.post(SERVER_URL + '/login', loginCredentials,
     function (data) {
@@ -92,9 +105,11 @@ function signIn() {
         
       } else {
         ons.notification.alert('Incorrect login information');
+        progressBar.innerHTML = "";
       }
     }).fail(function (error) {
     ons.notification.alert('Connection error');
+    progressBar.innerHTML = "";
   });
 };
 
