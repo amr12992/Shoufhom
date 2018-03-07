@@ -17,6 +17,7 @@ console.log(output);
 
 document.addEventListener('init', function(event) {
   var page = event.target;
+  
   if (page.matches('#signIn')) {
     if (localStorage.getItem('isSignedIn') == "yes") {
     	document.getElementById('signIn_civilID').value = localStorage.getItem('civilID');
@@ -29,6 +30,9 @@ document.addEventListener('init', function(event) {
   	
   else if (page.matches('#checkUpcomingAppointments'))
   	fillUpcomingAppointmentsTable();
+  else if (page.matches('#requestMeeting_guardian_subjectPage'))
+  	meeting_guardian_fillSubjectList();
+  	
 });
 
 function goToHome() {
@@ -115,14 +119,6 @@ function signIn() {
 
 function signUp() {
 	
-  var password = document.getElementById('signUp_password').value;
-  var cpassword = document.getElementById('signUp_cpassword').value;
-  
-  if (password != cpassword){
-  	ons.notification.alert("The passwords don't match.");
-  	return;
-  }
-	
   var newInfo = {
     fName: document.getElementById('signUp_fName').value,
     mName: document.getElementById('signUp_mName').value,
@@ -133,6 +129,19 @@ function signUp() {
     email: document.getElementById('signUp_email').value,
     password: document.getElementById('signUp_password').value
   };
+  
+  var password = document.getElementById('signUp_password').value;
+  var cpassword = document.getElementById('signUp_cpassword').value;
+  
+  if (!newInfo.fName || !newInfo.mName || !newInfo.lName || !newInfo.civilID || !newInfo.phone || !newInfo.mobile || !newInfo.email || !newInfo.password) {
+  	ons.notification.alert("Please complete the form.");
+  	return;
+  }
+  
+  if (password != cpassword){
+  	ons.notification.alert("The passwords don't match.");
+  	return;
+  }
   
   $.post(SERVER_URL + '/signup', newInfo,
     function (data) {
@@ -264,7 +273,8 @@ function fillUpcomingAppointmentsTable() {
     			
     			var date = parseDateTime(data[i].meetingTime);
     			
-    			table.innerHTML += '<ons-row><ons-col>' + data[i].fName + ' ' + data[i].lName +
+    			table.innerHTML += 
+    			'<ons-row><ons-col>' + data[i].fName + ' ' + data[i].lName +
     			'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
     			'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
     			'</ons-col></ons-row>';
@@ -364,7 +374,8 @@ function fillReportsTable(term, student) {
     	function (data) {
     		for (var i = 0; i < data.length; i++) {
 
-    			table.innerHTML += '<ons-row><ons-col>' + data[i].subjectName +
+    			table.innerHTML += 
+    			'<ons-row><ons-col>' + data[i].subjectName +
     			'</ons-col><ons-col>' + data[i].gradeLevel + '-' + data[i].classNumber +
     			'</ons-col><ons-col>' + data[i].fName + ' ' + data[i].lName +
     			'</ons-col><ons-col>' + data[i].grade1 +
@@ -378,17 +389,59 @@ function fillReportsTable(term, student) {
 	//console.log(table.innerHTML);
 };
 
+function meeting_guardian_fillSubjectList() {
+	var list = document.getElementById('requestMeeting_guardian_subjectList');
+	
+	var request = {
+		studentID: '10000002',
+		userID: localStorage.getItem('userID')
+	};
+	
+	$.post(SERVER_URL + '/getstudentsubjects', request,
+    	function (data) {
+    		for (var i = 0; i < data.length; i++) {
 
+    			list.innerHTML += 
+    			'<ons-list-item onclick="meeting_guardian_goToTimePage(' + data[i].userID + ')" tappable><ons-row class="listItem"><ons-col>' +
+	        		data[i].fName + ' ' + data[i].lName + 
+				'</ons-col><ons-col>' + 
+	    			data[i].subjectName + 
+				'</ons-col></ons-row></ons-list-item>';
+    		}
+	    }).fail(function (error) {
+	    	ons.notification.alert('Connection error');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
 
+function meeting_guardian_goToTimePage(teacher) {
+	
+	localStorage.setItem('meetingTeacherID', teacher);
+	fn.load('requestMeeting_timePage.html');
+};
 
+function meeting_guardian_checkDate(teacher) {
 
-
-
-
-
-
-
-
-
-
-
+	dateString = document.getElementById('requestMeeting_guardian_dateInput').value;
+	
+	console.log(dateString);
+	
+	var request = {
+		selectedDate: dateString,
+		teacherID: localStorage.getItem('meetingTeacherID')
+	};
+	
+	$.post(SERVER_URL + '/gettimewindows', request,
+    	function (data) {
+    		
+    		ons.notification.alert(data.availableTime);
+    		
+    	}).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
