@@ -53,23 +53,29 @@
         </ons-list>
       </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content id="content" page="accessReports.html"></ons-splitter-content>
+    <ons-splitter-content id="content" page="requestMeeting_guardian_subjectPage.html"></ons-splitter-content>
   </ons-splitter>
   
   <ons-template id="signIn.html">
     <ons-page id="signIn">
-        <ons-toolbar>
+        <ons-toolbar id="topBar">
             <div class="center"style="text-align: center">Sign in</div>
         </ons-toolbar>
       <div style="text-align: center; margin-top: 30px;">
         <p>
-          <ons-input id="signIn_civilID" modifier="underbar" placeholder="Civil ID" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signIn_civilID" modifier="underbar" placeholder="Civil ID" float style="width: 70%;"></ons-input>
         </p>
         <p>
-          <ons-input id="signIn_password" modifier="underbar" type="password" placeholder="Password" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signIn_password" modifier="underbar" type="password" placeholder="Password" float style="width: 70%;"></ons-input>
         </p>
         <p style="margin-top: 30px;">
           <ons-button style="width: 50%;" onclick="signIn()">Sign in</ons-button>
+          <div id="signInProgress"></div>
+        </p>
+        
+        <p style="margin-top: 30px;">
+          Don't have an account?<br>
+          <ons-button style="width: 50%;" onclick="fn.load('signUp.html')">Sign up</ons-button>
         </p>
       </div>
     </ons-page>
@@ -81,73 +87,115 @@
   
   <ons-template id="signUp.html">
     <ons-page id="signUp">
-        <ons-toolbar>
+        <ons-toolbar id="topBar">
             <div class="center"style="text-align: center">Sign up</div>
         </ons-toolbar>
       <div style="text-align: center; margin-top: 40px;">
         <p>
-          <ons-input id="signUp_fName" modifier="underbar" placeholder="First Name" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_fName" modifier="underbar" placeholder="First Name" float style="width: 70%;"></ons-input>
         </p>
         <p>
-          <ons-input id="signUp_mName" modifier="underbar" placeholder="Middle Name" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_mName" modifier="underbar" placeholder="Middle Name" float style="width: 70%;"></ons-input>
         </p>
         <p>
-          <ons-input id="signUp_lName" modifier="underbar" placeholder="Last Name" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_lName" modifier="underbar" placeholder="Last Name" float style="width: 70%;"></ons-input>
         </p>
         <p>
-          <ons-input id="signUp_civilID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
-        </p>
-        
-        <p>
-          <ons-input id="signUp_phone" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_civilID" modifier="underbar"  placeholder="Civil ID" float style="width: 70%;"></ons-input>
         </p>
         
         <p>
-          <ons-input id="signUp_mobile" modifier="underbar"  placeholder="Mobile number" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_phone" modifier="underbar"  placeholder="Phone number" float style="width: 70%;"></ons-input>
         </p>
         
         <p>
-          <ons-input id="signUp_email" modifier="underbar"  placeholder="E-mail" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_mobile" modifier="underbar"  placeholder="Mobile number" float style="width: 70%;"></ons-input>
         </p>
         
         <p>
-          <ons-input id="signUp_password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_email" modifier="underbar"  placeholder="E-mail" float style="width: 70%;"></ons-input>
         </p>
         
         <p>
-          <ons-input id="signUp_cpassword" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
+          <ons-input class="textInput" id="signUp_password" modifier="underbar" type="Password" placeholder="Password" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <p>
+          <ons-input class="textInput" id="signUp_cpassword" modifier="underbar" type="Password" placeholder="Confirm Password" float style="width: 70%;"></ons-input>
         </p>
         
      
         <p style="margin-top: 50px;">
           <ons-button style="width: 50%;" onclick="signUp()">Confirm</ons-button>
         </p>
+        
+        <p style="margin-top: 20px;">
+          <ons-button style="width: 50%;" onclick="fn.load('signIn.html')">Cancel</ons-button>
+        </p>
+        
       </div>
     </ons-page>
   </ons-template>
+
+  <!-- Guardian home page -->
   
-  <!-- Teacher home page -->
-  
-  <ons-template id="teacherHome.html">
-    <ons-page id="teacherHome">
-      <ons-toolbar>
+  <ons-template id="guardianHome.html">
+    <ons-page id="guardianHome">
+      <ons-toolbar id="topBar">
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
             <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
           </ons-toolbar-button>
         </div>
         <div class="center">
-          Main
+          Shoufhom
+        </div>
+      </ons-toolbar>
+      <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
+        Guardian home
+      </h1>
+      <ons-list class="mainMenuButtonList">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
+            Exam times
+          </ons-button>
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
+            Upcoming appointments
+          </ons-button>
+          <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
+            Student grade reports
+          </ons-button>
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+            Request meeting
+          </ons-button>
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+            Switch active student
+          </ons-button>
+      </ons-list>
+    </ons-page>
+  </ons-template>
+
+  <!-- Teacher home page -->
+  
+  <ons-template id="teacherHome.html">
+    <ons-page id="teacherHome">
+      <ons-toolbar id="topBar">
+        <div class="left">
+          <ons-toolbar-button onclick="fn.open()">
+            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Shoufhom
         </div>
       </ons-toolbar>
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
         Teacher home
       </h1>
       <ons-list class="mainMenuButtonList">
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
             Exam times
           </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
             Upcoming appointments
           </ons-button>
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
@@ -173,14 +221,14 @@
   
   <ons-template id="counsellorHome.html">
     <ons-page id="counsellorHome">
-      <ons-toolbar>
+      <ons-toolbar id="topBar">
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
             <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
           </ons-toolbar-button>
         </div>
         <div class="center">
-          Main
+          Shoufhom
         </div>
       </ons-toolbar>
       <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
@@ -190,10 +238,10 @@
       	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
             Exam times
           </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
+      	  <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
             Upcoming appointments
           </ons-button>
-          <ons-button class="mainMenuButton" modifier="large" onclick="">
+          <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
             Student grade reports
           </ons-button>
       	  <ons-button class="mainMenuButton" modifier="large" onclick="">
@@ -215,48 +263,11 @@
     </ons-page>
   </ons-template>
   
-  <!-- Guardian home page -->
-  
-  <ons-template id="guardianHome.html">
-    <ons-page id="guardianHome">
-      <ons-toolbar>
-        <div class="left">
-          <ons-toolbar-button onclick="fn.open()">
-            <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-          </ons-toolbar-button>
-        </div>
-        <div class="center">
-          Main
-        </div>
-      </ons-toolbar>
-      <h1 style="text-align: center; opacity: 0.6; padding-top: 20px;">
-        Guardian home
-      </h1>
-      <ons-list class="mainMenuButtonList">
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
-            Exam times
-          </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
-            Upcoming appointments
-          </ons-button>
-          <ons-button class="mainMenuButton" modifier="large" onclick="">
-            Student grade reports
-          </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
-            Request meeting
-          </ons-button>
-      	  <ons-button class="mainMenuButton" modifier="large" onclick="">
-            Switch active student
-          </ons-button>
-      </ons-list>
-    </ons-page>
-  </ons-template>
-  
    <!-- exam times page -->
   
   <ons-template id="examTimes.html">
     <ons-page id="examTimes">
-      <ons-toolbar>
+      <ons-toolbar id="topBar">
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
             <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
@@ -269,81 +280,80 @@
       <div id="examTimeTable" style="text-align: center; margin-top: 30px;">
 		<ons-row>
 			<ons-col class="tableHead">
-				header1
+				Subject
 			</ons-col>
 			<ons-col class="tableHead">
-				header2
+				Date
+			</ons-col>
+			<ons-col class="tableHead">
+				Time
 			</ons-col>
 		</ons-row>
       </div>
       <p style="margin-top: 50px; text-align: center;">
-          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+          <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
       </p>
     </ons-page>
   </ons-template>
   
   <!-- Check upcoming appointments page -->
   
-  <ons-template id="checkUppcomingAppointments.html">
-    <ons-page id="checkUppcomingAppointments">
-      <ons-toolbar>
+  <ons-template id="checkUpcomingAppointments.html">
+    <ons-page id="checkUpcomingAppointments">
+      <ons-toolbar id="topBar">
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
             <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
           </ons-toolbar-button>
         </div>
         <div class="center">
-         Check upcoming appointments
+         Upcoming Appointments
         </div>
       </ons-toolbar>
-      <div id="upcommingAppointmentsTable" style="text-align: center; margin-top: 30px;">
+      <div id="upcomingAppointmentsTable" style="text-align: center; margin-top: 30px;">
     	<ons-row>
 			<ons-col class="tableHead">
 				Name
 			</ons-col>
             <ons-col class="tableHead">
-    			Time
+    			Date
 			</ons-col>
 			<ons-col class="tableHead">
-				Date
+				Time
 			</ons-col>
 		</ons-row>
       </div>
       <p style="margin-top: 50px; text-align: center;">
-          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+          <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
       </p>
     </ons-page>
   </ons-template>
   
   
-    <!-- Access Reports page -- conseller based -->
+    <!-- Access Reports page -- counseller based -->
     
-      <ons-template id="accessReports.html">
-
-      
-    <ons-page id="accessReports">
-      <ons-toolbar>
+    <ons-template id="reports_page.html">
+    <ons-page id="reports_page">
+      <ons-toolbar id="topBar">
         <div class="left">
           <ons-toolbar-button onclick="fn.open()">
             <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
           </ons-toolbar-button>
         </div>
         <div class="center">
-         Access Reports
+         Reports
         </div>
-        
       </ons-toolbar>
       
-      <h4 style=" margin-top: 30px;">select terms:</h4>
-            <ons-select id="choose-sel" onchange="editSelects(event)"  style="text-align: center; margin-top: 1px;width: 70%;" >
-            <option value="basic">term1</option>
-            <option value="material">term2</option>
-            <option value="underbar">term3</option>
+      <h4 style=" margin-top: 30px;">Select year:</h4>
+            <ons-select onchange="editSelects(event)"  style="text-align: center; margin-top: 1px;width: 70%;" >
+	            <select id="reportsYearSelect" class="select-input">
+				</select>
             </ons-select>
-      <div id="accessReportTable" style="text-align: center; margin-top: 30px;">
+      <div style="text-align: center; margin-top: 30px; float: ;">
         <ons-row>
 			<ons-col class="tableHead">
-				Grade level
+				Subject
 			</ons-col>
             <ons-col class="tableHead">
     			Class number 
@@ -351,36 +361,94 @@
              <ons-col class="tableHead">
         		Teacher
 			</ons-col>
-			<ons-col class="tableHead">
-				absences
-			</ons-col>
             <ons-col class="tableHead">
-    			gradebreakdown
+    			Grade
 			</ons-col>
-           
 		</ons-row>
+		<div id="reportsTable">
+        
+      	</div>
       </div>
       <p style="margin-top: 50px; text-align: center;">
-          <ons-button style="width: 50%;" onclick="fillTimeTable()">Test</ons-button>
+      	<ons-button style="width: 50%;" onclick="updateReportsTable()">Update</ons-button>
+      </p>
+      <p style="margin-top: 20px; text-align: center;">
+      	<ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
       </p>
     </ons-page>
   </ons-template>
   
-  <!-- counsellor ID search -- Access reports -->
-  <ons-template id="counsellerIdSearch.html">
-    <ons-page id="counsellerIdSearch">
-        <ons-toolbar>
-            <div class="center"style="text-align: center">Access Reports</div>
+  <!-- Student ID search -- Access reports -->
+  <ons-template id="reports_studentID_page.html">
+    <ons-page id="reports_studentID_page">
+        <ons-toolbar id="topBar">
+        	<div class="left">
+          		<ons-toolbar-button onclick="fn.open()">
+            		<ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          		</ons-toolbar-button>
+        	</div>
+            <div class="center">Access Reports</div>
         </ons-toolbar>
       <div style="text-align: center; margin-top: 100px;">
         
         <h3>Enter the student ID:</h3>
         <p>
-          <ons-input id="CounsellorIdSearch" modifier="underbar" placeholder="Student ID" float style="width: 70%;"></ons-input>
+          <ons-input id="reports_studentID_input" modifier="underbar" placeholder="Student ID" float style="width: 70%;"></ons-input>
         </p>
         
         <p style="margin-top: 70px;">
-          <ons-button style="width: 50%;" onclick="">submit</ons-button>
+          <ons-button style="width: 50%;" onclick="reportStudentID()">Submit</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  
+  <!-- Request meeting: Guardian-side subject list -->
+  
+  <ons-template id="requestMeeting_guardian_subjectPage.html">
+    <ons-page id="requestMeeting_guardian_subjectPage">
+        <ons-toolbar id="topBar">
+        	<div class="left">
+          		<ons-toolbar-button onclick="fn.open()">
+            		<ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          		</ons-toolbar-button>
+        	</div>
+            <div class="center">Request Meeting</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 50px;">
+        <h3>Select a teacher:</h3>
+      </div>
+      <div id="requestMeeting_guardian_subjectList" style="text-align: center; margin-top: 30px;">
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  <!-- Request meeting: Guardian-side time selection -->
+  
+  <ons-template id="requestMeeting_timePage.html">
+    <ons-page id="requestMeeting_guardian_timePage">
+        <ons-toolbar id="topBar">
+        	<div class="left">
+          		<ons-toolbar-button onclick="fn.open()">
+            		<ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          		</ons-toolbar-button>
+        	</div>
+            <div class="center">Request Meeting</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 50px;">
+        
+        <h3>Select a date:</h3>
+        <p>
+          <ons-input id="requestMeeting_guardian_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 70%;"></ons-input>
+        </p>
+        
+        <div id="requestMeeting_timePage" style="text-align: center; margin-top: 50px;">
+          
+        </div>
+        
+        <p style="margin-top: 70px;">
+          <ons-button style="width: 50%;" onclick="meeting_guardian_checkDate()">Submit</ons-button>
         </p>
       </div>
     </ons-page>
@@ -391,7 +459,7 @@
 
   <ons-template id="settings.html">
   <ons-page>
-    <ons-toolbar>
+    <ons-toolbar id="topBar">
       <div class="left">
         <ons-toolbar-button onclick="fn.open()">
           <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
@@ -406,7 +474,7 @@
 
   <ons-template id="about.html">
   <ons-page>
-    <ons-toolbar>
+    <ons-toolbar id="topBar">
       <div class="left">
         <ons-toolbar-button onclick="fn.open()">
           <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>

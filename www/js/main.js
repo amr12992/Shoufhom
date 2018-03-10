@@ -1,4 +1,4 @@
-var SERVER_URL = 'https://ShoufhomNode-iam688687.codeanyapp.com';
+var SERVER_URL = 'http://ShoufhomNode-iam688687.codeanyapp.com:3000';
 
 // Dump all localStorage
 
@@ -13,10 +13,11 @@ if (localStorage.length) {
 console.log(output);
 
 
-// This is executed when the signIn page initializes
+// This is executed whenever a page initializes
 
 document.addEventListener('init', function(event) {
   var page = event.target;
+  
   if (page.matches('#signIn')) {
     if (localStorage.getItem('isSignedIn') == "yes") {
     	document.getElementById('signIn_civilID').value = localStorage.getItem('civilID');
@@ -24,9 +25,17 @@ document.addEventListener('init', function(event) {
     	signIn();
     }
   }
+  else if (page.matches('#examTimes'))
+  	fillExamTimeTable();
+  	
+  else if (page.matches('#checkUpcomingAppointments'))
+  	fillUpcomingAppointmentsTable();
+  else if (page.matches('#requestMeeting_guardian_subjectPage'))
+  	meeting_guardian_fillSubjectList();
+  	
 });
 
-var goToHome = function() {
+function goToHome() {
 	var userRole = localStorage.getItem('userRole');
         
         switch (userRole) {
@@ -44,17 +53,30 @@ var goToHome = function() {
         }
 }
 
-var signOut = function() {
+function signOut() {
 	localStorage.clear();
 	fn.load('signIn.html');
 	ons.notification.toast('Signed out', {timeout: 4000});
 }
 
-var signIn = function() {  
+function signIn() {
+	
+  var civilIDInput = document.getElementById('signIn_civilID');
+  var passwordInput = document.getElementById('signIn_password');
+  
+  if (!civilIDInput.value || !passwordInput.value) {
+  	ons.notification.alert('Please complete the form');
+  	return;
+  }
+  
   var loginCredentials = {
-    civilID: document.getElementById('signIn_civilID').value,
-    password: document.getElementById('signIn_password').value
+    civilID: civilIDInput.value,
+    password: passwordInput.value
   };
+  
+  var progressBar = document.getElementById('signInProgress');
+  
+  progressBar.innerHTML += '<ons-progress-bar indeterminate></ons-progress-bar>';
   
   $.post(SERVER_URL + '/login', loginCredentials,
     function (data) {
@@ -87,21 +109,15 @@ var signIn = function() {
         
       } else {
         ons.notification.alert('Incorrect login information');
+        progressBar.innerHTML = "";
       }
     }).fail(function (error) {
     ons.notification.alert('Connection error');
+    progressBar.innerHTML = "";
   });
 };
 
-var signUp = function() {
-	
-  var password = document.getElementById('signUp_password').value;
-  var cpassword = document.getElementById('signUp_cpassword').value;
-  
-  if (password != cpassword){
-  	ons.notification.alert("The passwords don't match.");
-  	return;
-  }
+function signUp() {
 	
   var newInfo = {
     fName: document.getElementById('signUp_fName').value,
@@ -113,6 +129,19 @@ var signUp = function() {
     email: document.getElementById('signUp_email').value,
     password: document.getElementById('signUp_password').value
   };
+  
+  var password = document.getElementById('signUp_password').value;
+  var cpassword = document.getElementById('signUp_cpassword').value;
+  
+  if (!newInfo.fName || !newInfo.mName || !newInfo.lName || !newInfo.civilID || !newInfo.phone || !newInfo.mobile || !newInfo.email || !newInfo.password) {
+  	ons.notification.alert("Please complete the form.");
+  	return;
+  }
+  
+  if (password != cpassword){
+  	ons.notification.alert("The passwords don't match.");
+  	return;
+  }
   
   $.post(SERVER_URL + '/signup', newInfo,
     function (data) {
@@ -151,31 +180,268 @@ var signUp = function() {
   });
 };
 
-var fillTimeTable = function() {
+function parseDateTime(sqlDateTime) {
+	var dateTime = String(sqlDateTime).substr(0, 19);
+    dateTime = dateTime.replace(/T|Z/gi, ' ');  
+    dateTime = dateTime.split(/[- :]/);
+    var utcDate = new Date(Date.UTC(dateTime[0], dateTime[1]-1, dateTime[2], dateTime[3], dateTime[4], dateTime[5]));
+	return utcDate;
+};
+
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function fillExamTimeTable() {
 	var table = document.getElementById('examTimeTable');
 	
-	var examTimesRequest {
+	var request = {
 		userID: localStorage.getItem('userID'),
 		userRole: localStorage.getItem('userRole')
-	}
+	};
 	
-	$.post(SERVER_URL + '/examtimes', newInfo,
-    	function (data) {
-    		//if (examTimesRequest.userRole == )
+	$.post(SERVER_URL + '/examtimes', request,
+    	function (data) {		
+    		if (request.userRole == 'Guardian') {
+    			
+    			for (var i = 0; i < data.length; i++) {
+                    
+                    var date = parseDateTime(data[i].examTime1);
+
+    				table.innerHTML += '<ons-row><ons-col>' + data[i].subjectName +
+    				'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
+    				'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
+    				'</ons-col></ons-row>';
+    			}
+    			
+    		}
+    		else {
+    			
+    			table.innerHTML = '<ons-row>' + 
+								  	'<ons-col class="tableHead">' +
+										 'Exam'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Class'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Date'+
+									'</ons-col>' +
+									'<ons-col class="tableHead">' +
+										 'Time'+
+									'</ons-col>' +
+								 '</ons-row>';
+								 
+				for (var i = 0; i < data.length; i++) {
+                    
+                    var date = parseDateTime(data[i].examTime1);
+                    
+    				table.innerHTML += '<ons-row><ons-col>' + data[i].subjectName +
+    				'</ons-col><ons-col>' + data[i].gradeLevel + '-' + data[i].classNumber +
+    				'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
+    				'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
+    				'</ons-col></ons-row>';
+    			}
+    			
+    		}
     	
     }).fail(function (error) {
     ons.notification.alert('Connection error');
   });
+};
+
+
+function fillUpcomingAppointmentsTable() {
+	var table = document.getElementById('upcomingAppointmentsTable');
 	
-	table.innerHTML += 
-		'<ons-row>' + 
-			'<ons-col>' +
-				'test' +
-			'</ons-col>' +
-			'<ons-col>' +
-				'123' +
-			'</ons-col>' +
-		'</ons-row>';
+	var request = {
+		userID: localStorage.getItem('userID'),
+		userRole: localStorage.getItem('userRole')
+	};
+	
+	$.post(SERVER_URL + '/checkappointments', request,
+    	function (data) {
+    		
+    		if (!data[0]) {
+    			ons.notification.toast('You have no upcoming appointments.', {timeout: 2000});
+    			goToHome();
+    		}
+    			
+    		for (var i = 0; i < data.length; i++) {
+    			
+    			var date = parseDateTime(data[i].meetingTime);
+    			
+    			table.innerHTML += 
+    			'<ons-row><ons-col>' + data[i].fName + ' ' + data[i].lName +
+    			'</ons-col><ons-col>' + date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear() +
+    			'</ons-col><ons-col>' + date.getHours() + ':' + pad(date.getMinutes(), 2) +
+    			'</ons-col></ons-row>';
+    		}
+    }).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+	
 		
 	//console.log(table.innerHTML);
+};
+
+function openReportsPage() {
+	
+	userRole = localStorage.getItem('userRole');
+	
+	if (userRole == 'Guardian') {
+		initReportsPage();
+	}
+	else {
+		fn.load('reports_studentID_page.html');
+	}
 }
+
+function reportStudentID() {
+	studentIdInput = document.getElementById('reports_studentID_input');
+	student = studentIdInput.value;
+	
+	console.log(student);
+	
+	var request = {
+		studentID: student
+	}
+	
+	$.post(SERVER_URL + '/checkstudentid', request,
+    	function (data) {
+    		console.log(data);
+    		if (data == 'invalid_student') {
+    			ons.notification.alert('Invalid student ID.');
+    			studentIdInput.value = "";
+    			
+    		}
+    		else {
+    			localStorage.setItem('counsellorStudentID', student);
+    			initReportsPage(student);
+    		}
+    		
+    		
+    }).fail(function (error) {
+    	ons.notification.alert('Connection error');
+  	});
+}
+
+function initReportsPage(student) {
+	fn.load('reports_page.html');
+	
+  	var request = {
+  		userID: localStorage.getItem('userID'),
+  		studentID: student
+  	}
+  	
+  	$.post(SERVER_URL + '/getyears', request,
+    	function (data) {
+    			var select = document.getElementById('reportsYearSelect');
+
+	    		for (var i = 0; i < data.length; i++) {
+	    			select.innerHTML += '<option value="' + data[i].termYear + '">' + data[i].termYear +'</option>';
+	    		}
+	    		fillReportsTable(select.value, student);
+	    		
+	    	}).fail(function (error) {
+	    	ons.notification.alert('Connection error');
+  		});
+}
+
+function updateReportsTable() {
+	var select = document.getElementById('reportsYearSelect');
+	var table = document.getElementById('reportsTable');
+	
+	table.innerHTML = '';
+	
+	var studentID = localStorage.getItem('counsellorStudentID');
+	
+	fillReportsTable(select.value, studentID);
+}
+
+function fillReportsTable(term, student) {
+	var table = document.getElementById('reportsTable');
+	
+	var request = {
+		termYear: term,
+		userID: localStorage.getItem('userID'),
+		studentID: student
+	};
+	
+	$.post(SERVER_URL + '/gradereports', request,
+    	function (data) {
+    		for (var i = 0; i < data.length; i++) {
+
+    			table.innerHTML += 
+    			'<ons-row><ons-col>' + data[i].subjectName +
+    			'</ons-col><ons-col>' + data[i].gradeLevel + '-' + data[i].classNumber +
+    			'</ons-col><ons-col>' + data[i].fName + ' ' + data[i].lName +
+    			'</ons-col><ons-col>' + data[i].grade1 +
+    			'</ons-col></ons-row>';
+    		}
+    }).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
+
+function meeting_guardian_fillSubjectList() {
+	var list = document.getElementById('requestMeeting_guardian_subjectList');
+	
+	var request = {
+		studentID: '10000002',
+		userID: localStorage.getItem('userID')
+	};
+	
+	$.post(SERVER_URL + '/getstudentsubjects', request,
+    	function (data) {
+    		for (var i = 0; i < data.length; i++) {
+
+    			list.innerHTML += 
+    			'<ons-list-item onclick="meeting_guardian_goToTimePage(' + data[i].userID + ')" tappable><ons-row class="listItem"><ons-col>' +
+	        		data[i].fName + ' ' + data[i].lName + 
+				'</ons-col><ons-col>' + 
+	    			data[i].subjectName + 
+				'</ons-col></ons-row></ons-list-item>';
+    		}
+	    }).fail(function (error) {
+	    	ons.notification.alert('Connection error');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
+
+function meeting_guardian_goToTimePage(teacher) {
+	
+	localStorage.setItem('meetingTeacherID', teacher);
+	fn.load('requestMeeting_timePage.html');
+};
+
+function meeting_guardian_checkDate(teacher) {
+
+	dateString = document.getElementById('requestMeeting_guardian_dateInput').value;
+	
+	console.log(dateString);
+	
+	var request = {
+		selectedDate: dateString,
+		teacherID: localStorage.getItem('meetingTeacherID')
+	};
+	
+	$.post(SERVER_URL + '/gettimewindows', request,
+    	function (data) {
+    		
+    		ons.notification.alert(data.availableTime);
+    		
+    	}).fail(function (error) {
+    ons.notification.alert('Connection error');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
