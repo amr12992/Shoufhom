@@ -427,7 +427,7 @@
   <!-- Request meeting: Guardian-side time selection -->
   
   <ons-template id="requestMeeting_timePage.html">
-    <ons-page id="requestMeeting_guardian_timePage">
+    <ons-page id="requestMeeting_timePage">
         <ons-toolbar id="topBar">
         	<div class="left">
           		<ons-toolbar-button onclick="fn.open()">
@@ -440,15 +440,17 @@
         
         <h3>Select a date:</h3>
         <p>
-          <ons-input id="requestMeeting_guardian_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 70%;"></ons-input>
+          <ons-input id="requestMeeting_guardian_dateInput" type="date" modifier="underbar" placeholder="Time" float style="width: 70%;"></ons-input>
         </p>
         
-        <div id="requestMeeting_timePage" style="text-align: center; margin-top: 50px;">
-          
+        <div id="requestMeeting_timeContainer" style="text-align: center; margin-top: 50px;">
+	        <p style="margin-top: 70px;">
+	          <ons-button style="width: 50%;" onclick="meeting_guardian_checkDate()">Check date</ons-button>
+	        </p>
         </div>
         
-        <p style="margin-top: 70px;">
-          <ons-button style="width: 50%;" onclick="meeting_guardian_checkDate()">Submit</ons-button>
+        <p style="margin-top: 20px;">
+          <ons-button style="width: 50%;" onclick="fn.load('requestMeeting_guardian_subjectPage.html')">Back</ons-button>
         </p>
       </div>
     </ons-page>

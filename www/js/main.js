@@ -399,10 +399,11 @@ function meeting_guardian_fillSubjectList() {
 	
 	$.post(SERVER_URL + '/getstudentsubjects', request,
     	function (data) {
-    		for (var i = 0; i < data.length; i++) {
-
+    		for (var i = 0; i < data.length; i++) {    			
     			list.innerHTML += 
-    			'<ons-list-item onclick="meeting_guardian_goToTimePage(' + data[i].userID + ')" tappable><ons-row class="listItem"><ons-col>' +
+    			'<ons-list-item onclick="meeting_guardian_goToTimePage(' + 
+    			data[i].userID + ',\'' + data[i].fName + '\',\'' + data[i].lName + '\',\'' + data[i].subjectName + 
+    			'\')" tappable><ons-row class="listItem"><ons-col>' +
 	        		data[i].fName + ' ' + data[i].lName + 
 				'</ons-col><ons-col>' + 
 	    			data[i].subjectName + 
@@ -416,32 +417,89 @@ function meeting_guardian_fillSubjectList() {
 	//console.log(table.innerHTML);
 };
 
-function meeting_guardian_goToTimePage(teacher) {
+function meeting_guardian_goToTimePage(teacherID, teacherFName, teacherLName, teacherSubjectName) {
 	
-	localStorage.setItem('meetingTeacherID', teacher);
+	var teacher = {
+		userID: teacherID,
+		fName: teacherFName,
+		lName: teacherLName,
+		subjectName: teacherSubjectName
+	};
+	
+	localStorage.setItem('meetingTeacher', JSON.stringify(teacher));
 	fn.load('requestMeeting_timePage.html');
 };
 
 function meeting_guardian_checkDate(teacher) {
 
 	dateString = document.getElementById('requestMeeting_guardian_dateInput').value;
+	timeContainer = document.getElementById('requestMeeting_timeContainer');
+	var teacher = JSON.parse(localStorage.getItem('meetingTeacher'));
 	
 	console.log(dateString);
+	console.log(teacher.userID);
 	
 	var request = {
 		selectedDate: dateString,
-		teacherID: localStorage.getItem('meetingTeacherID')
+		teacherID: teacher.userID
 	};
 	
-	$.post(SERVER_URL + '/gettimewindows', request,
+	$.post(SERVER_URL + '/getavailablewindows', request,
     	function (data) {
     		
-    		ons.notification.alert(data.availableTime);
+    		if (data == 'unavailable'){
+    			timeContainer.innerHTML = '<h3 style="margin-top: 70px;">' +
+    			teacher.fName + ' ' + teacher.lName +
+    			' won\'t be available on that day, please select another.' +
+    			'<br><br><ons-button style="width: 50%;" onclick="meeting_guardian_checkDate()">Check date</ons-button></p>';
+    		}
+    		else {
+    			timeContainer.innerHTML = '<h3 style="margin-top: 70px;">The teacher you selected will be available at ' + data.availableTime.substr(0, 5) +
+    			'<br><br><ons-button style="width: 50%;" onclick="meeting_createAppointment()">Confirm</ons-button></p>';
+    		}
     		
     	}).fail(function (error) {
-    ons.notification.alert('Connection error');
+    ons.notification.alert('Connection error!!!!');
   });
 	
 		
 	//console.log(table.innerHTML);
 };
+
+/*
+function meeting_createAppointment() {
+
+	dateString = document.getElementById('requestMeeting_guardian_dateInput').value;
+	timeContainer = document.getElementById('requestMeeting_timeContainer');
+	var teacher = JSON.parse(localStorage.getItem('meetingTeacher'));
+	
+	console.log(dateString);
+	console.log(teacher.userID);
+	
+	var request = {
+		selectedDate: dateString,
+		teacherID: teacher.userID
+	};
+	
+	$.post(SERVER_URL + '/getavailablewindows', request,
+    	function (data) {
+    		
+    		if (data == 'unavailable'){
+    			timeContainer.innerHTML = '<h3 style="margin-top: 70px;">' +
+    			teacher.fName + ' ' + teacher.lName +
+    			' won\'t be available on that day, please select another.' +
+    			'<br><br><ons-button style="width: 50%;" onclick="meeting_guardian_checkDate()">Check date</ons-button></p>';
+    		}
+    		else {
+    			timeContainer.innerHTML = '<h3 style="margin-top: 70px;">The teacher you selected will be available at ' + data.availableTime.substr(0, 5) +
+    			'<br><br><ons-button style="width: 50%;" onclick="meeting_createAppointment()">Confirm</ons-button></p>';
+    		}
+    		
+    	}).fail(function (error) {
+    ons.notification.alert('Connection error!!!!');
+  });
+	
+		
+	//console.log(table.innerHTML);
+};
+*/
