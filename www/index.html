@@ -53,7 +53,7 @@
         </ons-list>
       </ons-page>
     </ons-splitter-side>
-    <ons-splitter-content id="content" page="requestMeeting_guardian_subjectPage.html"></ons-splitter-content>
+    <ons-splitter-content id="content" page="Specify_timeWindows.html"></ons-splitter-content>
   </ons-splitter>
   
   <ons-template id="signIn.html">
@@ -456,6 +456,99 @@
     </ons-page>
   </ons-template>
   
+  
+  <!-- Request meeting: teacher-side student list -->
+  
+  <ons-template id="requestMeeting_teacher_studentPage.html">
+    <ons-page id="requestMeeting_teacher_studentList">
+        <ons-toolbar id="topBar">
+            <div class="left">
+          		<ons-toolbar-button onclick="fn.open()">
+            		<ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          		</ons-toolbar-button>
+        	</div>
+            <div class="center">Request Meeting</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 50px;">
+        <h3>Select a student:</h3>
+      </div>
+      <div id="requestMeeting_teacher_studentList" style="text-align: center; margin-top: 30px;">
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  <!-- Request meeting: both sides selected information -->
+  
+  <ons-template id="requestMeeting_selectedInfo.html">
+   <ons-page id="requestMeeting_selectedInfo">
+        <ons-toolbar id="topBar">
+            <div class="left">
+          		<ons-toolbar-button onclick="fn.open()">
+            		<ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+          		</ons-toolbar-button>
+        	</div>
+            <div class="center">Request Meeting</div>
+        </ons-toolbar>
+      <div style="text-align: center; margin-top: 50px;">
+        
+        <h3>You're about to request a meeting with :</h3>
+        
+        
+        <div id="requestMeeting_selectedInfo" style="text-align: center; margin-top: 50px;">
+          
+        </div>
+        
+        <p style="margin-top: 70px;">
+          <ons-button style="text-align: center;width: 50%;" onclick="">Submit</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+  
+  
+   <!-- Specify meeting time windows -->
+<ons-template id="Specify_timeWindows.html">  
+    <ons-page>
+        <ons-toolbar>
+         <div class="center">Time Windows</div>
+        </ons-toolbar>
+
+        <ons-list>
+        <ons-list-header style="margin-top: 30px;"><h4>Days</h4></ons-list-header>
+        <ons-list-item>Sunday:       
+        <ons-input id="timeWindows_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 50%;text-align: center; margin-left:auto"></ons-input>
+          </ons-list-item>
+          
+          <ons-list-item>Monday:       
+        <ons-input id="timeWindows_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 50%;text-align: center; margin-left:auto"></ons-input>
+          </ons-list-item>
+          
+          <ons-list-item>Tuesday:       
+        <ons-input id="timeWindows_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 50%;text-align: center; margin-left:auto"></ons-input>
+          </ons-list-item>
+          
+          <ons-list-item>Wednesday:       
+        <ons-input id="timeWindows_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 50%;text-align: center; margin-left:auto"></ons-input>
+          </ons-list-item>
+          
+          <ons-list-item>Thursday:       
+        <ons-input id="timeWindows_dateInput" type="time" modifier="underbar" placeholder="Time" float style="width: 50%;text-align: center; margin-left:auto"></ons-input>
+          </ons-list-item>
+          
+        </ons-list>
+
+
+    <section style="padding: 60px">
+    <ons-button style="text-align: center;width: 45%;" onclick="">Update</ons-button>
+    <ons-button style="text-align: center;width: 45%;" onclick="">Back</ons-button>
+  </section>
+
+ 
+ 
+ 
+    </ons-page>
+</ons-template>
+
   
   <!-- ................... -->
 
