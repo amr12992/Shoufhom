@@ -24,9 +24,9 @@ document.addEventListener('init', function(event) {
             document.getElementById('signIn_password').value = localStorage.getItem('password');
             signIn();
         }
-    } else if (page.matches('#examTimes'))
+    } 
+    else if (page.matches('#examTimes'))
         fillExamTimeTable();
-
     else if (page.matches('#checkUpcomingAppointments'))
         fillUpcomingAppointmentsTable();
     else if (page.matches('#requestMeeting_guardian_subjectPage'))
@@ -35,6 +35,10 @@ document.addEventListener('init', function(event) {
         meeting_teacher_fillStudentList();
     else if (page.matches('#timeWindows'))
         timeWindows_fillInputs();
+    else if (page.matches('#switchActiveStudent'))
+        switchActiveStudent_getStudents();
+    else if (page.matches('#switchActiveClass'))
+        switchActiveClass_getClasses();
 
 });
 
@@ -43,24 +47,24 @@ function goToHome() {
 
     switch (userRole) {
         case 'Guardian':
-            fn.load('guardianHome.html');
+            fn.reset('guardianHome.html');
             break;
 
         case 'Teacher':
-            fn.load('teacherHome.html');
+            fn.reset('teacherHome.html');
             break;
 
         case 'Counsellor':
-            fn.load('counsellorHome.html');
+            fn.reset('counsellorHome.html');
             break;
     }
 }
 
 function signOut() {
     localStorage.clear();
-    fn.load('signIn.html');
+    fn.reset('signIn.html');
     ons.notification.toast('Signed out', {
-        timeout: 4000
+        timeout: 4000, force: true
     });
 }
 
@@ -94,7 +98,7 @@ function signIn() {
                 localStorage.setItem('userID', data.userID);
                 localStorage.setItem('isSignedIn', "yes");
 
-                ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000});
+                ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000, force: true});
 
                 var userRole = localStorage.getItem('userRole');
                 checkCloseAppointments()
@@ -161,7 +165,7 @@ function signUp() {
                 localStorage.setItem('isSignedIn', "yes");
 
                 ons.notification.toast('Signup success, welcome ' + data.fName + '!', {
-                    timeout: 4000
+                    timeout: 4000, force: true
                 });
 
                 var userRole = localStorage.getItem('userRole');
@@ -202,13 +206,33 @@ function pad(num, size) {
     return s;
 }
 
+function initExamTimes() {
+    var userRole = localStorage.getItem('userRole');
+    
+    if (userRole = 'Guardian') {
+        var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+    
+        if (!activeStudent) {
+            ons.notification.toast('Please a student under "Switch active student"', {timeout: 4000, force: true});
+            return;
+        }
+    }
+    
+    fn.load('examTimes.html');
+}
+
 function fillExamTimeTable() {
     var table = document.getElementById('examTimeTable');
+    
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
 
     var request = {
         userID: localStorage.getItem('userID'),
-        userRole: localStorage.getItem('userRole')
+        userRole: localStorage.getItem('userRole'),
+        studentID: (activeStudent ? activeStudent.studentID : "")
     };
+    
+    console.log(request.studentID);
 
     $.post(SERVER_URL + '/examtimes', request,
         function(data) {
@@ -299,8 +323,18 @@ function fillUpcomingAppointmentsTable() {
 function openReportsPage() {
 
     userRole = localStorage.getItem('userRole');
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+    
+    if (!activeStudent) {
+        ons.notification.toast('Please a student under "Switch active student"', {timeout: 4000, force: true});
+        return;
+    }
 
     if (userRole == 'Guardian') {
+        if (!activeStudent) {
+            ons.notification.toast('Please a student under "Switch active student"', {timeout: 4000, force: true});
+            return;
+        }
         initReportsPage();
     } else {
         fn.load('reports_studentID_page.html');
@@ -337,10 +371,12 @@ function reportStudentID() {
 
 function initReportsPage(student) {
     fn.load('reports_page.html');
+    
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
 
     var request = {
         userID: localStorage.getItem('userID'),
-        studentID: student
+        studentID: (student ? student : activeStudent.studentID)
     }
 
     $.post(SERVER_URL + '/getyears', request,
@@ -350,7 +386,7 @@ function initReportsPage(student) {
             for (var i = 0; i < data.length; i++) {
                 select.innerHTML += '<option value="' + data[i].termYear + '">' + data[i].termYear + '</option>';
             }
-            fillReportsTable(select.value, student);
+            fillReportsTable(select.value, request.studentID);
 
         }).fail(function(error) {
         ons.notification.alert('Connection error');
@@ -360,10 +396,15 @@ function initReportsPage(student) {
 function updateReportsTable() {
     var select = document.getElementById('reportsYearSelect');
     var table = document.getElementById('reportsTable');
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+    var userRole = localStorage.getItem('userRole');
 
     table.innerHTML = '';
 
-    var studentID = localStorage.getItem('counsellorStudentID');
+    if (userRole != 'Guardian')
+        var studentID = localStorage.getItem('counsellorStudentID');
+    else
+        var studentID = activeStudent.studentID;
 
     fillReportsTable(select.value, studentID);
 }
@@ -396,11 +437,25 @@ function fillReportsTable(term, student) {
     //console.log(table.innerHTML);
 };
 
+function meeting_guardian_init() {
+    
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+    
+    if (!activeStudent) {
+        ons.notification.toast('Please a student under "Switch active student"', {timeout: 4000, force: true});
+        return;
+    }
+    
+    fn.load('requestMeeting_guardian_subjectPage.html');
+}
+
 function meeting_guardian_fillSubjectList() {
     var list = document.getElementById('requestMeeting_guardian_subjectList');
+    
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
 
     var request = {
-        studentID: '10000002',
+        studentID: activeStudent.studentID,
         userID: localStorage.getItem('userID')
     };
 
@@ -440,12 +495,29 @@ function meeting_guardian_goToTimePage(teacherID, teacherFName, teacherLName, te
     fn.load('requestMeeting_timePage.html');
 };
 
+function meeting_teacher_init() {
+    
+    var activeClass = JSON.parse(localStorage.getItem('activeClass'));
+    
+    if (!activeClass) {
+        ons.notification.toast('Please a class under "Switch active class"', {timeout: 4000, force: true});
+        return;
+    }
+    
+    fn.load('requestMeeting_teacher_studentPage.html');
+}
+
+
 function meeting_teacher_fillStudentList() {
     var list = document.getElementById('requestMeeting_teacher_studentList');
+    
+    var activeClass = JSON.parse(localStorage.getItem('activeClass'));
 
     var request = {
-        subjectID: '10000001',
+        subjectID: activeClass.subjectID
     };
+    
+    console.log(request.subjectID);
 
     $.post(SERVER_URL + '/getactivesubjectstudents', request,
         function(data) {
@@ -551,7 +623,7 @@ function meeting_createAppointment(guardianID, teacherID, dateTime) {
         function(data) {
 
             if (data == 'success'){
-                ons.notification.toast('Appointment successfully created', {timeout: 4000});
+                ons.notification.toast('Appointment successfully created', {timeout: 4000, force: true});
                 goToHome();
             }
             else {
@@ -598,7 +670,7 @@ function timeWindows_fillInputs() {
                 thursdayInput.value = data.thursday;
             }
             else {
-                ons.notification.toast('You do not have any time windows set.', {timeout: 4000});
+                ons.notification.toast('You do not have any time windows set.', {timeout: 4000, force: true});
             }
 
         }).fail(function(error) {
@@ -632,7 +704,7 @@ function timeWindows_update() {
         function(data) {
 
             if (data == 'success') {
-                ons.notification.toast('Time windows successfully updated', {timeout: 4000});
+                ons.notification.toast('Time windows successfully updated', {timeout: 4000, force: true});
                 goToHome();
             }
 
@@ -645,10 +717,10 @@ function checkCloseAppointments() {
     
     var request = {
         userID: localStorage.getItem('userID'),
-        userRole: localStorage.getItem('userRole'),
+        interval: 10
     };
     
-    $.post(SERVER_URL + '/checknearappointments', request,
+    $.post(SERVER_URL + '/checkAppointmentsWithin', request,
         function(data) {
 
             if (data != 'none') {
@@ -658,4 +730,115 @@ function checkCloseAppointments() {
         }).fail(function(error) {
         ons.notification.alert('Connection error');
     });
-}
+};
+
+function switchActiveStudent_getStudents() {
+    
+    var select = document.getElementById('switchActiveStudent_select');
+    
+    var request = {
+        userID: localStorage.getItem('userID'),
+    };
+    
+    $.post(SERVER_URL + '/getGuardianStudents', request,
+        function(data) {
+
+            if (data.length == 1) {
+                ons.notification.toast('You have only one student.', {timeout: 4000, force: true});
+                fn.pop();
+            }
+
+            for (var i = 0; i < data.length; i++) {
+                select.innerHTML += '<option value="' + data[i].studentID + '">' + data[i].fName + '</option>';
+            }
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+};
+
+function switchActiveStudent_switchStudent() {
+    
+    var select = document.getElementById('switchActiveStudent_select');
+    
+    var request = {
+        studentID: select.value,
+    };
+    
+    $.post(SERVER_URL + '/checkstudentID', request,
+        function(data) {
+
+            var student = {
+                studentID: data.studentID,
+                fName: data.fName,
+                mName: data.mName,
+                lName: data.lName
+            };
+            
+            localStorage.setItem('activeStudent', JSON.stringify(student));
+            
+            ons.notification.toast('Switched active student to ' + student.fName + '.', {timeout: 4000, force: true});
+            goToHome();
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+};
+
+function switchActiveClass_getClasses() {
+    
+    var select = document.getElementById('switchActiveClass_select');
+    
+    var request = {
+        userID: localStorage.getItem('userID'),
+    };
+    
+    $.post(SERVER_URL + '/getTeacherSubjects', request,
+        function(data) {
+
+            if (data.length == 1) {
+                ons.notification.toast('You are teaching only one class', {timeout: 4000, force: true});
+                fn.pop();
+            }
+
+
+            for (var i = 0; i < data.length; i++) {
+                var classNumber = data[i].gradeLevel + '-' + data[i].classNumber;
+                select.innerHTML += '<option value="' + data[i].subjectID + '">' + classNumber + '</option>';
+            }
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+};
+
+function switchActiveClass_switchClass() {
+    
+    var select = document.getElementById('switchActiveClass_select');
+    
+    var request = {
+        subjectID: select.value,
+    };
+    
+    $.post(SERVER_URL + '/getSingleSubject', request,
+        function(data) {
+
+            var subject = {
+                subjectID: select.value,
+                classNumber: data.gradeLevel + '-' + data.classNumber
+            };
+            
+            console.log(select.innerHTML);
+            
+            localStorage.setItem('activeClass', JSON.stringify(subject));
+            
+            console.log(localStorage.getItem('activeClass'));
+            
+            ons.notification.toast('Switched active class to ' + subject.classNumber + '.', {timeout: 4000, force: true});
+            goToHome();
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+};
+

@@ -23,16 +23,29 @@
         });
 
         window.fn = {};
+
         window.fn.open = function() {
-            var menu = document.getElementById('menu');
-            menu.open();
+          var menu = document.getElementById('menu');
+          menu.open();
         };
-        window.fn.load = function(page) {
-            var content = document.getElementById('content');
-            var menu = document.getElementById('menu');
-            content
-                .load(page)
-                .then(menu.close.bind(menu));
+        
+        window.fn.load = function(page, data) {
+          var content = document.getElementById('navigator');
+          var menu = document.getElementById('menu');
+          content.pushPage(page, data)
+            .then(menu.close.bind(menu));
+        };
+        
+        window.fn.pop = function() {
+          var content = document.getElementById('navigator');
+          content.popPage();
+        };
+        
+        window.fn.reset = function(page, data) {
+          var content = document.getElementById('navigator');
+          var menu = document.getElementById('menu');
+          content.resetToPage(page, {animation: 'fade'})
+            .then(menu.close.bind(menu));
         };
     </script>
 </head>
@@ -54,8 +67,14 @@
                 </ons-list>
             </ons-page>
         </ons-splitter-side>
-        <ons-splitter-content id="content" page="signIn.html"></ons-splitter-content>
+        <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
     </ons-splitter>
+    
+    <ons-template id="home.html">
+        <ons-page id="home">
+            <ons-navigator animation="fade" id="navigator" page="signIn.html"></ons-navigator>
+        </ons-page>
+    </ons-template>
 
     <ons-template id="signIn.html">
         <ons-page id="signIn">
@@ -156,7 +175,7 @@
                 Guardian home
             </h1>
             <ons-list class="mainMenuButtonList">
-                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
+                <ons-button class="mainMenuButton" modifier="large" onclick="initExamTimes()">
                     Exam times
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
@@ -165,10 +184,10 @@
                 <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
                     Student grade reports
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('requestMeeting_guardian_subjectPage.html')">
+                <ons-button class="mainMenuButton" modifier="large" onclick="meeting_guardian_init()">
                     Request meeting
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="">
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('switchActiveStudent.html')">
                     Switch active student
                 </ons-button>
             </ons-list>
@@ -193,16 +212,16 @@
                 Teacher home
             </h1>
             <ons-list class="mainMenuButtonList">
-                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
+                <ons-button class="mainMenuButton" modifier="large" onclick="initExamTimes()">
                     Exam times
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
                     Upcoming appointments
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('requestMeeting_teacher_studentPage.html')">
+                <ons-button class="mainMenuButton" modifier="large" onclick="meeting_teacher_init()">
                     Request meeting
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="">
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('switchActiveClass.html')">
                     Switch active class
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('timeWindows.html')">
@@ -236,7 +255,7 @@
                 Counsellor home
             </h1>
             <ons-list class="mainMenuButtonList">
-                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('examTimes.html')">
+                <ons-button class="mainMenuButton" modifier="large" onclick="initExamTimes()">
                     Exam times
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
@@ -245,10 +264,10 @@
                 <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
                     Student grade reports
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('requestMeeting_teacher_studentPage.html')">
+                <ons-button class="mainMenuButton" modifier="large" onclick="meeting_teacher_init()">
                     Request meeting
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="">
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('switchActiveClass.html')">
                     Switch active class
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('timeWindows.html')">
@@ -480,6 +499,7 @@
 
 
     <!-- Specify meeting time windows -->
+    
     <ons-template id="timeWindows.html">
         <ons-page id="timeWindows">
             <ons-toolbar>
@@ -527,6 +547,65 @@
             </div>
 
 
+        </ons-page>
+    </ons-template>
+    
+    <!-- Specify meeting time windows -->
+    
+    <ons-template id="switchActiveStudent.html">
+        <ons-page id="switchActiveStudent">
+            <ons-toolbar id="topBar">
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">Switch active student</div>
+            </ons-toolbar>
+            <div style="text-align: center; margin-top: 50px;">
+                <h3>Select a student:</h3>
+            </div>
+            <div id="switchActiveStudent_container" style="text-align: center; margin-top: 30px;">
+                <ons-select onchange="editSelects(event)" style="text-align: center; margin-top: 1px;width: 70%;">
+                    <select id="switchActiveStudent_select" class="select-input">
+                    </select>
+                </ons-select>
+                <p style="margin-top: 70px;">
+                    <ons-button style="width: 50%;" onclick="switchActiveStudent_switchStudent()">Switch</ons-button>
+                </p>
+                <p style="margin-top: 20px;">
+                    <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
+                </p>
+            </div>
+        </ons-page>
+    </ons-template>
+    
+    
+        <ons-template id="switchActiveClass.html">
+        <ons-page id="switchActiveClass">
+            <ons-toolbar id="topBar">
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">Switch active class</div>
+            </ons-toolbar>
+            <div style="text-align: center; margin-top: 50px;">
+                <h3>Select a class:</h3>
+            </div>
+            <div id="switchActiveClass_container" style="text-align: center; margin-top: 30px;">
+                <ons-select onchange="editSelects(event)" style="text-align: center; margin-top: 1px;width: 70%;">
+                    <select id="switchActiveClass_select" class="select-input">
+                    </select>
+                </ons-select>
+                <p style="margin-top: 70px;">
+                    <ons-button style="width: 50%;" onclick="switchActiveClass_switchClass()">Switch</ons-button>
+                </p>
+                <p style="margin-top: 20px;">
+                    <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
+                </p>
+            </div>
         </ons-page>
     </ons-template>
 
