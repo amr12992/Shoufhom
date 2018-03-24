@@ -60,12 +60,19 @@ function goToHome() {
     }
 }
 
+function today() {
+    var date = Date.now();
+}
+
 function signOut() {
     localStorage.clear();
     fn.reset('signIn.html');
     ons.notification.toast('Signed out', {
         timeout: 4000, force: true
     });
+    
+    var menu = document.getElementById('menu');
+    menu.removeAttribute('swipeable');
 }
 
 function signIn() {
@@ -100,22 +107,11 @@ function signIn() {
 
                 ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000, force: true});
 
-                var userRole = localStorage.getItem('userRole');
                 checkCloseAppointments()
-
-                switch (userRole) {
-                    case 'Guardian':
-                        fn.load('guardianHome.html');
-                        break;
-
-                    case 'Teacher':
-                        fn.load('teacherHome.html');
-                        break;
-
-                    case 'Counsellor':
-                        fn.load('counsellorHome.html');
-                        break;
-                }
+                goToHome();
+                
+                var menu = document.getElementById('menu');
+                menu.setAttribute('swipeable', '');
 
             } else {
                 ons.notification.alert('Incorrect login information');
@@ -324,11 +320,6 @@ function openReportsPage() {
 
     userRole = localStorage.getItem('userRole');
     var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
-    
-    if (!activeStudent) {
-        ons.notification.toast('Please a student under "Switch active student"', {timeout: 4000, force: true});
-        return;
-    }
 
     if (userRole == 'Guardian') {
         if (!activeStudent) {
@@ -842,3 +833,82 @@ function switchActiveClass_switchClass() {
     });
 };
 
+
+function submitAttendance() {
+    var container = document.getElementById('submitAttendance_container').children;
+    var dateInput = document.getElementById('submitAttendance_dateInput');
+    
+    var studentArray = [];
+    
+    for (var i = 0; i < container.length; i++) {
+        console.log(container[i].firstElementChild.value + ': ' + container[i].firstElementChild.checked);
+        
+        if (!container[i].firstElementChild.checked) continue;
+        
+        studentArray.push(container[i].firstElementChild.value);
+    }
+    
+    var request = {
+        subjectID: localStorage.getItem('activeClass'),
+        absenceDate: dateInput.value,
+        students: studentArray
+    };
+    
+    for (var i = 0; i < request.students.length; i++) {
+        console.log(request.students[i]);
+    }
+    
+    $.post(SERVER_URL + '/submitAbsence', request,
+        function(data) {
+
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+}
+
+
+function fillAttendancePage() {
+    
+    var dateInput = document.getElementById('submitAttendance_dateInput');
+    //dateInput.value = new Date(Date.now()).toISOString().substr(0, 10);
+    var container = document.getElementById('submitAttendance_container');
+    
+    container.innerHTML = '';
+    
+    var request = {
+        subjectID: JSON.parse(localStorage.getItem('activeClass')).subjectID,
+        absenceDate: dateInput.value
+    };
+    
+    $.post(SERVER_URL + '/getStudentsAbsences', request,
+        function(data) {
+            var studentList = data.studentList;
+            var absentStudents = data.absentStudents;       
+            
+            for (var i = 0; i < studentList.length; i++) {
+                var newTextbox = document.createElement('p');
+                var newCheckbox = document.createElement('ons-checkbox');
+                newTextbox.className = 'attendanceCheckbox';
+                console.log(studentList[i].subjectStudentID);
+                newTextbox.innerHTML = studentList[i].fName + ' ' + studentList[i].lName;
+                newCheckbox.value = studentList[i].subjectStudentID;
+                newCheckbox.id = studentList[i].subjectStudentID;
+                
+                function checkStudent(absentStudent) {
+                    return JSON.stringify(absentStudent) == JSON.stringify(studentList[i]);
+                }
+                
+                if (absentStudents.find(checkStudent)) {
+                    newCheckbox.setAttribute('checked', '');
+                }
+                container.appendChild(newTextbox);
+                newTextbox.appendChild(newCheckbox);
+            }
+            
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+    
+}

@@ -1,5 +1,3 @@
-/* Main menu buttons */
-
 .mainMenuButton {
 	margin-top: 10px;
 	border-radius: 5px;
@@ -12,6 +10,11 @@
 
 .tableHead {
 	background-color: #cccccc;
+}
+
+ons-button {
+    border-radius 5px;
+    width: 50%;
 }
 
 ons-col {
@@ -78,3 +81,21 @@ h3 {
 .textInput {
 	
 }
+
+.attendanceCheckbox {
+    margin: auto;
+    text-align: left;
+    width: 70%;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #aaa;
+}
+
+.attendanceCheckbox ons-checkbox {
+    float: right;
+}
+
+.attendanceCheckbox ons-switch {
+    float: right;
+}
+
