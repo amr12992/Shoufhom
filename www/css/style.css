@@ -12,6 +12,31 @@
 	background-color: #cccccc;
 }
 
+ons-row.gradeTableHead {
+    background-color: #cccccc;
+    padding: auto; 
+    text-align: center;
+    width: 60em;
+}
+
+ons-col.gradeTableHead {
+    background-color: #cccccc;
+    padding: auto; 
+    text-align: center;
+    width: 60em;
+}
+
+.gradeTableItem {
+    padding: auto;
+    text-align: center;
+    width: 60em;
+}
+
+.gradeTableItem ons-input {
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
 ons-button {
     border-radius 5px;
     width: 50%;
@@ -79,7 +104,8 @@ h3 {
 }
 
 .textInput {
-	
+	text-align: center;
+    margin: auto;
 }
 
 .attendanceCheckbox {

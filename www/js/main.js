@@ -15,6 +15,12 @@ console.log(output);
 
 // This is executed whenever a page initializes
 
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function onDeviceReady() {
+    
+}
+
 document.addEventListener('init', function(event) {
     var page = event.target;
 
@@ -39,6 +45,13 @@ document.addEventListener('init', function(event) {
         switchActiveStudent_getStudents();
     else if (page.matches('#switchActiveClass'))
         switchActiveClass_getClasses();
+    else if (page.matches('#submitAttendance')) {
+        var dateInput = document.getElementById('submitAttendance_dateInput');
+        dateInput.value = new Date(Date.now()).toISOString().substr(0, 10);
+        fillAttendancePage();
+    }
+    else if (page.matches('#submitGrades'))
+        fillGradesPage();
 
 });
 
@@ -833,46 +846,11 @@ function switchActiveClass_switchClass() {
     });
 };
 
-
-function submitAttendance() {
-    var container = document.getElementById('submitAttendance_container').children;
-    var dateInput = document.getElementById('submitAttendance_dateInput');
-    
-    var studentArray = [];
-    
-    for (var i = 0; i < container.length; i++) {
-        console.log(container[i].firstElementChild.value + ': ' + container[i].firstElementChild.checked);
-        
-        if (!container[i].firstElementChild.checked) continue;
-        
-        studentArray.push(container[i].firstElementChild.value);
-    }
-    
-    var request = {
-        subjectID: localStorage.getItem('activeClass'),
-        absenceDate: dateInput.value,
-        students: studentArray
-    };
-    
-    for (var i = 0; i < request.students.length; i++) {
-        console.log(request.students[i]);
-    }
-    
-    $.post(SERVER_URL + '/submitAbsence', request,
-        function(data) {
-
-
-        }).fail(function(error) {
-        ons.notification.alert('Connection error');
-    });
-}
-
-
 function fillAttendancePage() {
-    
     var dateInput = document.getElementById('submitAttendance_dateInput');
     //dateInput.value = new Date(Date.now()).toISOString().substr(0, 10);
     var container = document.getElementById('submitAttendance_container');
+    document.getElementById('submitAttendance_button').setAttribute('disabled', '')
     
     container.innerHTML = '';
     
@@ -910,5 +888,167 @@ function fillAttendancePage() {
         }).fail(function(error) {
         ons.notification.alert('Connection error');
     });
+    document.getElementById('submitAttendance_button').removeAttribute('disabled');
+}
+
+function submitAttendance() {
+    var container = document.getElementById('submitAttendance_container').children;
+    var dateInput = document.getElementById('submitAttendance_dateInput');
     
+    var studentArray = [];
+    
+    for (var i = 0; i < container.length; i++) {
+        console.log(container[i].firstElementChild.value + ': ' + container[i].firstElementChild.checked);
+        
+        if (!container[i].firstElementChild.checked) continue;
+        
+        studentArray.push(container[i].firstElementChild.value);
+    }
+    
+    var request = {
+        subjectID: localStorage.getItem('activeClass'),
+        absenceDate: dateInput.value,
+        students: studentArray
+    };
+    
+    for (var i = 0; i < request.students.length; i++) {
+        console.log(request.students[i]);
+    }
+    
+    $.post(SERVER_URL + '/submitAbsence', request,
+        function(data) {
+            if (data == 'success')
+                ons.notification.toast('Attendance updated successfully', {timeout: 1000, force: true});
+            else
+                ons.notification.toast('There was an issue updating attendance', {timeout: 1000, force: true});
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+}
+
+function fillGradesPage() {
+    var container = document.getElementById('submitGrades_container');
+    
+    container.innerHTML = '';
+    
+    var subject = JSON.parse(localStorage.getItem('activeClass'));
+    
+    var request = {
+        subjectID: subject.subjectID,
+    };
+    
+    $.post(SERVER_URL + '/getSubjectGrades', request,
+        function(data) {
+            var subjectType = data.subjectType;
+            var studentArray = data.studentArray;
+            var gradeArray = data.gradeArray;
+            
+            subject.subjectType = subjectType;
+            
+            localStorage.setItem('activeClass', JSON.stringify(subject));
+            
+            var tableHeadRow = document.createElement('ons-row');
+            tableHeadRow.className = 'gradeTableHead';
+            
+            var tableHeadColumn = document.createElement('ons-col');
+            tableHeadColumn.className = 'gradeTableHead';
+            tableHeadColumn.innerHTML = 'Student';
+            tableHeadRow.appendChild(tableHeadColumn);
+            
+            for (var i = 0; i < gradeArray.length; i++) {
+                var tableHeadColumn = document.createElement('ons-col');
+                tableHeadColumn.className = 'gradeTableHead';
+                tableHeadColumn.innerHTML = gradeArray[i];
+                tableHeadRow.appendChild(tableHeadColumn);
+            }
+            
+            container.appendChild(tableHeadRow);
+            
+            for (var i = 0; i < studentArray.length; i++) {
+                var studentName = studentArray[i].fName + ' ' + studentArray[i].lName;
+                
+                var tableItemRow = document.createElement('ons-row');
+                tableItemRow.className = 'gradeTableItem';
+                
+                var tableItemColumn = document.createElement('ons-col');
+                tableItemColumn.className = 'gradeTableItem';
+                tableItemColumn.innerHTML = studentName;
+                tableItemRow.appendChild(tableItemColumn);
+                
+                var tableItemColumn = document.createElement('ons-col');
+                tableItemColumn.className = 'gradeTableItem';
+                tableItemColumn.innerHTML = studentArray[i].subjectStudentID;
+                tableItemColumn.style = 'display: none';
+                tableItemRow.appendChild(tableItemColumn);
+                
+                var gradeNumber = 1;
+                
+                Object.keys(studentArray[i]).forEach(function(key) {
+                    if (key != 'subjectStudentID' && key.search('Name') == -1) {
+                        tableItemColumn = document.createElement('ons-col');
+                        
+                        var tableItemColumnInput = document.createElement('ons-input');
+                        tableItemColumnInput.setAttribute('type', 'number');
+                        tableItemColumnInput.setAttribute('modifier', 'underbar');
+                        tableItemColumnInput.setAttribute('float', '');
+                        tableItemColumnInput.id = 'grade' + gradeNumber;
+                        tableItemColumnInput.className = 'textInput';
+                        tableItemColumnInput.setAttribute('value', studentArray[i][key]);
+                        tableItemColumnInput.value = studentArray[i][key];
+                        
+                        tableItemColumn.className = 'gradeTableItem';
+                        tableItemColumn.appendChild(tableItemColumnInput);
+                        
+                        tableItemRow.appendChild(tableItemColumn);
+                        
+                        gradeNumber++;
+                    }
+                });
+                console.log(tableItemRow.innerHTML);
+                container.appendChild(tableItemRow);
+                
+            }
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+}
+
+function submitGrades() {
+    var subject = JSON.parse(localStorage.getItem('activeClass'));
+    var container = document.getElementById('submitGrades_container').children;
+    var studentArray = [];
+    
+    for (var i = 1; i < container.length; i++) {
+        var row = container[i].children;
+        
+        var studentGrade = {
+            subjectStudentID: row[1].innerHTML
+        }
+        
+        for (var j = 2; j < row.length; j++) {
+            var key = 'grade' + (j - 1);
+            studentGrade[key] = row[j].firstElementChild.value;
+        }
+        
+        studentArray.push(studentGrade);
+    }
+    
+    var request = {
+        subjectID: subject.subjectID,
+        subjectType: subject.subjectType,
+        studentArray: studentArray
+    }
+    
+    $.post(SERVER_URL + '/submitGrades', request,
+        function(data) {
+            if (data == 'success')
+                ons.notification.toast('Grades updated successfully', {timeout: 1000, force: true});
+            else
+                ons.notification.toast('There was an issue updating grades', {timeout: 1000, force: true});
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
 }

@@ -74,7 +74,7 @@
     
     <ons-template id="home.html">
         <ons-page id="home">
-            <ons-navigator animation="fade" id="navigator" page="signIn.html"></ons-navigator>
+            <ons-navigator animation="fade" id="navigator" page="submitGrades.html"></ons-navigator>
         </ons-page>
     </ons-template>
 
@@ -232,7 +232,7 @@
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('submitAttendance.html')">
                     Submit attendance
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="">
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('submitGrades.html')">
                     Submit grades
                 </ons-button>
             </ons-list>
@@ -278,7 +278,7 @@
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('submitAttendance.html')">
                     Submit attendance
                 </ons-button>
-                <ons-button class="mainMenuButton" modifier="large" onclick="">
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('submitGrades.html')">
                     Submit grades
                 </ons-button>
             </ons-list>
@@ -552,7 +552,7 @@
         </ons-page>
     </ons-template>
     
-    <!-- Specify meeting time windows -->
+    <!-- Switch active student -->
     
     <ons-template id="switchActiveStudent.html">
         <ons-page id="switchActiveStudent">
@@ -582,6 +582,7 @@
         </ons-page>
     </ons-template>
     
+    <!-- Switch active class -->
     
     <ons-template id="switchActiveClass.html">
         <ons-page id="switchActiveClass">
@@ -611,7 +612,7 @@
         </ons-page>
     </ons-template>
     
-    
+    <!-- Submit attendance -->
     
     <ons-template id="submitAttendance.html">
         <ons-page id="submitAttendance">
@@ -627,14 +628,42 @@
                 <h3>Select the absent students only:</h3>
             </div>
             <div style="text-align: center; margin-top: 30px;">
-                <ons-input id="submitAttendance_dateInput" type="date" modifier="underbar" placeholder="Date" float style="width: 70%;"></ons-input>
+                <ons-input onchange="fillAttendancePage()" id="submitAttendance_dateInput" type="date" modifier="underbar" placeholder="Date" float style="width: 70%;"></ons-input>
                 <div id = "submitAttendance_container" style="text-align: center; margin-top: 30px;">
                 </div>
                 <p style="margin-top: 70px;">
-                    <ons-button style="width: 50%;" onclick="submitAttendance()">Submit</ons-button>
+                    <ons-button id="submitAttendance_button" style="width: 50%;" onclick="submitAttendance()">Submit</ons-button>
                 </p>
                 <p style="margin-top: 20px;">
-                    <ons-button style="width: 50%;" onclick="fillAttendancePage()">Fill</ons-button>
+                    <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
+                </p>
+            </div>
+        </ons-page>
+    </ons-template>
+    
+    <!-- Submit grades -->
+    
+    <ons-template id="submitGrades.html">
+        <ons-page id="submitGrades">
+            <ons-toolbar id="topBar">
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">Submit grades</div>
+            </ons-toolbar>
+            <div style="text-align: center; margin-top: 50px;">
+                <h3>Submit grades</h3>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <div id="submitGrades_container" style="text-align: center; margin-top: 30px; overflow-x: auto">
+                </div>
+                <p style="margin-top: 70px;">
+                    <ons-button style="width: 50%;" onclick="submitGrades()">Submit grades</ons-button>
+                </p>
+                <p style="margin-top: 20px;">
+                    <ons-button style="width: 50%;" onclick="fillGradesPage()">Refresh table</ons-button>
                 </p>
                 <p style="margin-top: 20px;">
                     <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
