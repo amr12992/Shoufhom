@@ -1,4 +1,4 @@
-var SERVER_URL = 'http://ShoufhomNode-iam688687.codeanyapp.com:3000';
+var SERVER_URL = 'https://ShoufhomNode-iam688687.codeanyapp.com';
 
 // Dump all localStorage
 
@@ -31,6 +31,9 @@ document.addEventListener('init', function(event) {
             signIn();
         }
     } 
+    else if (page.matches('#guardianHome') || page.matches('#teacherHome') || page.matches('#counsellorHome')) {
+        document.getElementById('activeDisplay').innerHTML = localStorage.getItem('activeDisplay');
+    }
     else if (page.matches('#examTimes'))
         fillExamTimeTable();
     else if (page.matches('#checkUpcomingAppointments'))
@@ -50,24 +53,36 @@ document.addEventListener('init', function(event) {
         dateInput.value = new Date(Date.now()).toISOString().substr(0, 10);
         fillAttendancePage();
     }
-    else if (page.matches('#submitGrades'))
+    else if (page.matches('#submitGrades')) {
+        var menu = document.getElementById('menu');
+        menu.removeAttribute('swipeable');
         fillGradesPage();
+    }
 
 });
 
 function goToHome() {
     var userRole = localStorage.getItem('userRole');
+    
+    var menu = document.getElementById('menu');
+    menu.setAttribute('swipeable', '');
 
     switch (userRole) {
         case 'Guardian':
+            var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+            if (activeStudent) localStorage.setItem('activeDisplay', 'Active student: ' + activeStudent.fName);
             fn.reset('guardianHome.html');
             break;
 
         case 'Teacher':
+            var activeClass = JSON.parse(localStorage.getItem('activeClass'));
+            if (activeClass) localStorage.setItem('activeDisplay', 'Active class: ' + activeClass.classNumber);
             fn.reset('teacherHome.html');
             break;
 
         case 'Counsellor':
+            var activeClass = JSON.parse(localStorage.getItem('activeClass'));
+            if (activeClass) localStorage.setItem('activeDisplay', 'Active class: ' + activeClass.classNumber);
             fn.reset('counsellorHome.html');
             break;
     }
@@ -218,7 +233,7 @@ function pad(num, size) {
 function initExamTimes() {
     var userRole = localStorage.getItem('userRole');
     
-    if (userRole = 'Guardian') {
+    if (userRole == 'Guardian') {
         var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
     
         if (!activeStudent) {
@@ -240,8 +255,6 @@ function fillExamTimeTable() {
         userRole: localStorage.getItem('userRole'),
         studentID: (activeStudent ? activeStudent.studentID : "")
     };
-    
-    console.log(request.studentID);
 
     $.post(SERVER_URL + '/examtimes', request,
         function(data) {
@@ -783,6 +796,7 @@ function switchActiveStudent_switchStudent() {
             
             ons.notification.toast('Switched active student to ' + student.fName + '.', {timeout: 4000, force: true});
             goToHome();
+            
 
         }).fail(function(error) {
         ons.notification.alert('Connection error');
@@ -808,7 +822,7 @@ function switchActiveClass_getClasses() {
 
             for (var i = 0; i < data.length; i++) {
                 var classNumber = data[i].gradeLevel + '-' + data[i].classNumber;
-                select.innerHTML += '<option value="' + data[i].subjectID + '">' + classNumber + '</option>';
+                select.innerHTML += '<option value="' + data[i].subjectID + '">' + classNumber + ' : ' + data[i].subjectName + '</option>';
             }
 
         }).fail(function(error) {
@@ -900,9 +914,12 @@ function submitAttendance() {
     for (var i = 0; i < container.length; i++) {
         console.log(container[i].firstElementChild.value + ': ' + container[i].firstElementChild.checked);
         
-        if (!container[i].firstElementChild.checked) continue;
+        var absence = {
+            subjectStudentID: container[i].firstElementChild.value,
+            isAbsent: container[i].firstElementChild.checked
+        }
         
-        studentArray.push(container[i].firstElementChild.value);
+        studentArray.push(absence);
     }
     
     var request = {
