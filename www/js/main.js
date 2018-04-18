@@ -1,6 +1,6 @@
 var SERVER_URL = 'https://ShoufhomNode-iam688687.codeanyapp.com';
 
-// Dump all localStorage
+// Dump all localStorage, REMOVE BEFORE RELEASE
 
 var output = "LOCALSTORAGE DATA:\n------------------------------------\n";
 if (localStorage.length) {
@@ -13,16 +13,21 @@ if (localStorage.length) {
 console.log(output);
 
 
-// This is executed whenever a page initializes
-
 document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
     
 }
 
+// This is executed whenever a page initializes
+
 document.addEventListener('init', function(event) {
     var page = event.target;
+    
+    var activeDisplay = document.getElementById('activeDisplay');
+    
+    if (activeDisplay)
+        activeDisplay.innerHTML = localStorage.getItem('activeDisplay');
 
     if (page.matches('#signIn')) {
         if (localStorage.getItem('isSignedIn') == "yes") {
@@ -48,6 +53,8 @@ document.addEventListener('init', function(event) {
         switchActiveStudent_getStudents();
     else if (page.matches('#switchActiveClass'))
         switchActiveClass_getClasses();
+    else if (page.matches('#absenceList'))
+        fillAbsences();
     else if (page.matches('#submitAttendance')) {
         var dateInput = document.getElementById('submitAttendance_dateInput');
         dateInput.value = new Date(Date.now()).toISOString().substr(0, 10);
@@ -60,6 +67,28 @@ document.addEventListener('init', function(event) {
     }
 
 });
+
+// Parse an ISO SQL datetime string into a date object
+
+function parseDateTime(sqlDateTime) {
+    var dateTime = String(sqlDateTime).substr(0, 19);
+    dateTime = dateTime.replace(/T|Z/gi, ' ');
+    dateTime = dateTime.split(/[- :]/);
+    var date = new Date(dateTime[0], dateTime[1], dateTime[2], dateTime[3] - 4, dateTime[4], dateTime[5], 0);
+    return date;
+};
+
+// Pad a number with zeroes
+
+function pad(num, size) {
+    var s = num + "";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function isNumber(str) {
+    return /^\d+$/.test(str);
+}
 
 function goToHome() {
     var userRole = localStorage.getItem('userRole');
@@ -96,7 +125,7 @@ function signOut() {
     localStorage.clear();
     fn.reset('signIn.html');
     ons.notification.toast('Signed out', {
-        timeout: 4000, force: true
+        timeout: 1000, force: true
     });
     
     var menu = document.getElementById('menu');
@@ -135,7 +164,8 @@ function signIn() {
 
                 ons.notification.toast('Login success, welcome ' + data.fName + '!', {timeout: 4000, force: true});
 
-                checkCloseAppointments()
+                checkCloseAppointments();
+                checkActive();
                 goToHome();
                 
                 var menu = document.getElementById('menu');
@@ -166,11 +196,24 @@ function signUp() {
 
     var password = document.getElementById('signUp_password').value;
     var cpassword = document.getElementById('signUp_cpassword').value;
+    
+    console.log(newInfo);
 
     if (!newInfo.fName || !newInfo.mName || !newInfo.lName || !newInfo.civilID || !newInfo.phone || !newInfo.mobile || !newInfo.email || !newInfo.password) {
         ons.notification.alert("Please complete the form.");
         return;
     }
+    
+    if (!isNumber(newInfo.civilID) || newInfo.civilID.length != 12) {
+        ons.notification.alert("Invalid Civil ID.");
+        return;
+    }
+    
+    if (!isNumber(newInfo.phone) || !isNumber(newInfo.mobile)) {
+        ons.notification.alert("Invalid phone numbers.");
+        return;
+    }
+    
 
     if (password != cpassword) {
         ons.notification.alert("The passwords don't match.");
@@ -189,45 +232,80 @@ function signUp() {
                 localStorage.setItem('isSignedIn', "yes");
 
                 ons.notification.toast('Signup success, welcome ' + data.fName + '!', {
-                    timeout: 4000, force: true
+                    timeout: 2000, force: true
                 });
 
                 var userRole = localStorage.getItem('userRole');
 
                 switch (userRole) {
                     case 'Guardian':
-                        fn.load('guardianHome.html');
+                        fn.reset('guardianHome.html');
                         break;
 
                     case 'Teacher':
-                        fn.load('teacherHome.html');
+                        fn.reset('teacherHome.html');
                         break;
 
                     case 'Counsellor':
-                        fn.load('counsellorHome.html');
+                        fn.reset('counsellorHome.html');
                         break;
                 }
 
             } else {
-                ons.notification.alert('Incorrect login information');
+                ons.notification.alert('There has been an error in creating your account');
             }
         }).fail(function(error) {
         ons.notification.alert('Connection error');
     });
 };
 
-function parseDateTime(sqlDateTime) {
-    var dateTime = String(sqlDateTime).substr(0, 19);
-    dateTime = dateTime.replace(/T|Z/gi, ' ');
-    dateTime = dateTime.split(/[- :]/);
-    var date = new Date(dateTime[0], dateTime[1], dateTime[2], dateTime[3] - 4, dateTime[4], dateTime[5], 0);
-    return date;
-};
+// Set the active student or class if it isn't set already (usually when the user logs in after a log out)
 
-function pad(num, size) {
-    var s = num + "";
-    while (s.length < size) s = "0" + s;
-    return s;
+function checkActive() {
+    var userRole = localStorage.getItem('userRole');
+    
+    var request = {
+        userID: localStorage.getItem('userID'),
+    };
+    
+    if (userRole == 'Guardian') {
+        if (!localStorage.getItem('activeStudent')) {
+            $.post(SERVER_URL + '/getGuardianStudents', request,
+            function(data) {
+                if (data[0]) {
+                    var student = {
+                        studentID: data[0].studentID,
+                        fName: data[0].fName,
+                        mName: data[0].mName,
+                        lName: data[0].lName
+                    };
+                    
+                    localStorage.setItem('activeStudent', JSON.stringify(student));
+                }
+                
+            }).fail(function(error) {
+                ons.notification.alert('Connection error');
+            });
+        }
+    }
+    else {
+        if (!localStorage.getItem('activeClass')) {
+            $.post(SERVER_URL + '/getTeacherSubjects', request,
+            function(data) {
+                if (data[0]) {
+                    var subject = {
+                        subjectID: data[0].subjectID,
+                        classNumber: data[0].gradeLevel + '-' + data[0].classNumber
+                    };
+                    
+                    localStorage.setItem('activeClass', JSON.stringify(subject));
+                }
+                
+            }).fail(function(error) {
+                ons.notification.alert('Connection error');
+            });
+        }
+    }
 }
 
 function initExamTimes() {
@@ -242,7 +320,7 @@ function initExamTimes() {
         }
     }
     
-    fn.load('examTimes.html');
+    fn.reset('examTimes.html');
 }
 
 function fillExamTimeTable() {
@@ -261,6 +339,8 @@ function fillExamTimeTable() {
             if (request.userRole == 'Guardian') {
 
                 for (var i = 0; i < data.length; i++) {
+                    
+                    console.log(data[i].examTime1);
 
                     var date = parseDateTime(data[i].examTime1);
 
@@ -288,6 +368,8 @@ function fillExamTimeTable() {
                     '</ons-row>';
 
                 for (var i = 0; i < data.length; i++) {
+                    
+                    console.log(data[i].examTime1);
 
                     var date = parseDateTime(data[i].examTime1);
 
@@ -354,7 +436,7 @@ function openReportsPage() {
         }
         initReportsPage();
     } else {
-        fn.load('reports_studentID_page.html');
+        fn.reset('reports_studentID_page.html');
     }
 }
 
@@ -387,7 +469,7 @@ function reportStudentID() {
 }
 
 function initReportsPage(student) {
-    fn.load('reports_page.html');
+    fn.reset('reports_page.html');
     
     var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
 
@@ -440,10 +522,14 @@ function fillReportsTable(term, student) {
             for (var i = 0; i < data.length; i++) {
 
                 table.innerHTML +=
-                    '<ons-row><ons-col>' + data[i].subjectName +
-                    '</ons-col><ons-col>' + data[i].gradeLevel + '-' + data[i].classNumber +
-                    '</ons-col><ons-col>' + data[i].fName + ' ' + data[i].lName +
-                    '</ons-col><ons-col>' + data[i].grade1 +
+                    '<ons-row class = "gradeTableItem"><ons-col class = "gradeTableItem">' + data[i].subjectName +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].gradeLevel + '-' + data[i].classNumber +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].fName + ' ' + data[i].lName +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].quarter1 +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].quarter2 +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].quarter3 +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].quarter4 +
+                    '</ons-col><ons-col class = "gradeTableItem">' + data[i].finalGrade +
                     '</ons-col></ons-row>';
             }
         }).fail(function(error) {
@@ -459,11 +545,11 @@ function meeting_guardian_init() {
     var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
     
     if (!activeStudent) {
-        ons.notification.toast('Please a student under "Switch active student"', {timeout: 4000, force: true});
+        ons.notification.toast('Please a student under "Switch active student"', {timeout: 1000, force: true});
         return;
     }
     
-    fn.load('requestMeeting_guardian_subjectPage.html');
+    fn.reset('requestMeeting_guardian_subjectPage.html');
 }
 
 function meeting_guardian_fillSubjectList() {
@@ -483,7 +569,7 @@ function meeting_guardian_fillSubjectList() {
             
             for (var i = 0; i < data.length; i++) {
                 list.innerHTML +=
-                    '<ons-list-item onclick="meeting_guardian_goToTimePage(' +
+                    '<ons-list-item class="listItem" onclick="meeting_guardian_goToTimePage(' +
                     data[i].userID + ',\'' + data[i].fName + '\',\'' + data[i].lName + '\',\'' + data[i].subjectName +
                     '\')" tappable><ons-row class="listItem"><ons-col>' +
                     data[i].fName + ' ' + data[i].lName +
@@ -509,7 +595,7 @@ function meeting_guardian_goToTimePage(teacherID, teacherFName, teacherLName, te
     };
 
     localStorage.setItem('meetingTeacher', JSON.stringify(teacher));
-    fn.load('requestMeeting_timePage.html');
+    fn.reset('requestMeeting_timePage.html');
 };
 
 function meeting_teacher_init() {
@@ -521,7 +607,7 @@ function meeting_teacher_init() {
         return;
     }
     
-    fn.load('requestMeeting_teacher_studentPage.html');
+    fn.reset('requestMeeting_teacher_studentPage.html');
 }
 
 
@@ -543,7 +629,7 @@ function meeting_teacher_fillStudentList() {
             
             for (var i = 0; i < data.length; i++) {
                 list.innerHTML +=
-                    '<ons-list-item onclick="meeting_teacher_goToTimePage(\'' +
+                    '<ons-list-item class="listItem" onclick="meeting_teacher_goToTimePage(\'' +
                     data[i].guardianID + '\',\'' + data[i].guardianfName + '\',\'' + data[i].guardianlName + '\',\'' + data[i].studentfName + '\',\'' + data[i].studentlName +
                     '\')" tappable>' + 
                     '<ons-row class="listItem"><ons-col>' +
@@ -571,7 +657,7 @@ function meeting_teacher_goToTimePage(guardianID, guardianfName, guardianlName, 
     };
 
     localStorage.setItem('meetingGuardian', JSON.stringify(guardianStudent));
-    fn.load('requestMeeting_timePage.html');
+    fn.reset('requestMeeting_timePage.html');
 };
 
 function meeting_checkDate() {
@@ -658,9 +744,11 @@ function meeting_createAppointment(guardianID, teacherID, dateTime) {
 
 function meeting_goBack() {
     var userRole = localStorage.getItem('userRole');
-    var page = (userRole == 'Guardian') ? "requestMeeting_guardian_subjectPage.html" : "requestMeeting_teacher_studentPage.html";
     
-    fn.load(page);
+    if (userRole == 'Guardian')
+        meeting_guardian_init();
+    else
+        meeting_teacher_init();
 };
 
 function timeWindows_fillInputs() {
@@ -1044,10 +1132,14 @@ function submitGrades() {
             subjectStudentID: row[1].innerHTML
         }
         
-        for (var j = 2; j < row.length; j++) {
-            var key = 'grade' + (j - 1);
+        for (var j = 2; j < row.length - 1; j++) {
+            var key = 'quarter' + (j - 1);
             studentGrade[key] = row[j].firstElementChild.value;
         }
+        
+        studentGrade['finalGrade'] = row[row.length - 1].firstElementChild.value;
+        
+        console.log(studentGrade);
         
         studentArray.push(studentGrade);
     }
@@ -1064,6 +1156,57 @@ function submitGrades() {
                 ons.notification.toast('Grades updated successfully', {timeout: 1000, force: true});
             else
                 ons.notification.toast('There was an issue updating grades', {timeout: 1000, force: true});
+
+        }).fail(function(error) {
+        ons.notification.alert('Connection error');
+    });
+}
+
+function fillAbsences() {
+    var container = document.getElementById('absenceList_container');
+    var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+    var inputContainer = document.getElementById('absenceList_studentInput_container');
+    var userRole = localStorage.getItem('userRole');
+    var studentIDInput = document.getElementById('absences_studentID_input');
+    
+    if (userRole == 'Guardian')
+        inputContainer.innerHTML = "";
+    else if (userRole != 'Guardian' && studentIDInput.value == "")
+        return;
+    
+    var request = {
+        studentID: userRole == 'Guardian' ? activeStudent.studentID : studentIDInput.value
+    }
+    
+    console.log(request);
+    
+    $.post(SERVER_URL + '/getStudentAbsences', request,
+        function(data) {
+            console.log(data);
+            if (data != 'none') {
+                container.innerHTML += '<ons-row class="listHead"><ons-col>Date</ons-col><ons-col>Subject</ons-col></ons-row>';
+                for (var i = 0; i < data.length; i++) {
+                    var tableItemRow = document.createElement('ons-row');
+                    //tableItemRow.className = 'gradeTableItem';
+                    
+                    var dateColumn = document.createElement('ons-col');
+                    //dateColumn.className = 'gradeTableItem';
+                    dateColumn.innerHTML = parseDateTime(data[i].absenceDate).toDateString();
+                    tableItemRow.appendChild(dateColumn);
+                    
+                    var subjectColumn = document.createElement('ons-col');
+                    //subjectColumn.className = 'gradeTableItem';
+                    subjectColumn.innerHTML = data[i].subjectName;
+                    tableItemRow.appendChild(subjectColumn);
+                    
+                    container.appendChild(tableItemRow);
+                }
+            }
+            else {
+                var studentName = activeStudent ? activeStudent.fName : 'The selected student';
+                ons.notification.toast(studentName + ' has no absences.', {timeout: 1000, force: true});
+                goToHome();
+            }
 
         }).fail(function(error) {
         ons.notification.alert('Connection error');

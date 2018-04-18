@@ -18,37 +18,37 @@
     <link rel="stylesheet" href="css/style.css">
 
     <script>
-        ons.platform.select('android'); //Sets the platform to android, which forces Material design on all platforms
-        
-        ons.ready(function() {
-            console.log("Onsen UI is ready!");
-        });
+    ons.platform.select('android'); //Sets the platform to android, which forces Material design on all platforms
 
-        window.fn = {};
+    ons.ready(function() {
+        console.log("Onsen UI is ready!");
+    });
 
-        window.fn.open = function() {
-          var menu = document.getElementById('menu');
-          menu.open();
-        };
-        
-        window.fn.load = function(page, data) {
-          var content = document.getElementById('navigator');
-          var menu = document.getElementById('menu');
-          content.pushPage(page, data)
-            .then(menu.close.bind(menu));
-        };
-        
-        window.fn.pop = function() {
-          var content = document.getElementById('navigator');
-          content.popPage();
-        };
-        
-        window.fn.reset = function(page, data) {
-          var content = document.getElementById('navigator');
-          var menu = document.getElementById('menu');
-          content.resetToPage(page, {animation: 'fade'})
-            .then(menu.close.bind(menu));
-        };
+    window.fn = {};
+
+    window.fn.open = function() {
+        var menu = document.getElementById('menu');
+        menu.open();
+    };
+
+    window.fn.load = function(page, data) {
+        var content = document.getElementById('navigator');
+        var menu = document.getElementById('menu');
+        content.pushPage(page, data)
+        .then(menu.close.bind(menu));
+    };
+
+    window.fn.pop = function() {
+        var content = document.getElementById('navigator');
+        content.popPage();
+    };
+
+    window.fn.reset = function(page, data) {
+        var content = document.getElementById('navigator');
+        var menu = document.getElementById('menu');
+        content.resetToPage(page, {animation: 'fade'})
+        .then(menu.close.bind(menu));
+    };
     </script>
 </head>
 
@@ -60,9 +60,6 @@
                     <ons-list-item onclick="goToHome()" tappable>
                         Home
                     </ons-list-item>
-                    <ons-list-item onclick="fn.load('settings.html')" tappable>
-                        Settings
-                    </ons-list-item>
                     <ons-list-item onclick="signOut()" tappable>
                         Log out
                     </ons-list-item>
@@ -71,7 +68,7 @@
         </ons-splitter-side>
         <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
     </ons-splitter>
-    
+
     <ons-template id="home.html">
         <ons-page id="home">
             <ons-navigator animation="fade" id="navigator" page="signIn.html"></ons-navigator>
@@ -190,6 +187,9 @@
                 <ons-button class="mainMenuButton" modifier="large" onclick="meeting_guardian_init()">
                     Request meeting
                 </ons-button>
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('absenceList.html')">
+                    View absences
+                </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('switchActiveStudent.html')">
                     Switch active student
                 </ons-button>
@@ -281,6 +281,9 @@
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('submitAttendance.html')">
                     Submit attendance
                 </ons-button>
+                <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('absenceList.html')">
+                    View absences
+                </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('submitGrades.html')">
                     Submit grades
                 </ons-button>
@@ -301,6 +304,7 @@
                 <div class="center">
                     Exam times
                 </div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div id="examTimeTable" style="text-align: center; margin-top: 30px;">
                 <ons-row>
@@ -334,6 +338,7 @@
                 <div class="center">
                     Upcoming Appointments
                 </div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div id="upcomingAppointmentsTable" style="text-align: center; margin-top: 30px;">
                 <ons-row>
@@ -368,6 +373,7 @@
                 <div class="center">
                     Reports
                 </div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
 
             <h4 style=" margin-top: 30px;">Select year:</h4>
@@ -375,24 +381,33 @@
                 <select id="reportsYearSelect" class="select-input">
                 </select>
             </ons-select>
-            <div style="text-align: center; margin-top: 30px; float: ;">
-                <ons-row>
-                    <ons-col class="tableHead">
+            <div id="reportsTable" style="text-align: center; margin-top: 30px; overflow-x: auto; float: ;">
+                <ons-row class = "gradeTableHead">
+                    <ons-col class="gradeTableHead">
                         Subject
                     </ons-col>
-                    <ons-col class="tableHead">
+                    <ons-col class="gradeTableHead">
                         Class number
                     </ons-col>
-                    <ons-col class="tableHead">
+                    <ons-col class="gradeTableHead">
                         Teacher
                     </ons-col>
-                    <ons-col class="tableHead">
-                        Grade
+                    <ons-col class="gradeTableHead">
+                        Quarter 1
+                    </ons-col>
+                    <ons-col class="gradeTableHead">
+                        Quarter 2
+                    </ons-col>
+                    <ons-col class="gradeTableHead">
+                        Quarter 3
+                    </ons-col>
+                    <ons-col class="gradeTableHead">
+                        Quarter 4
+                    </ons-col>
+                    <ons-col class="gradeTableHead">
+                        Final Grade
                     </ons-col>
                 </ons-row>
-                <div id="reportsTable">
-
-                </div>
             </div>
             <p style="margin-top: 50px; text-align: center;">
                 <ons-button style="width: 50%;" onclick="updateReportsTable()">Update</ons-button>
@@ -413,6 +428,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Access Reports</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 100px;">
 
@@ -440,12 +456,16 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Request Meeting</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a teacher:</h3>
             </div>
             <div id="requestMeeting_guardian_subjectList" style="text-align: center; margin-top: 30px;">
             </div>
+            <p style="margin-top: 50px; text-align: center;">
+                <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
+            </p>
         </ons-page>
     </ons-template>
 
@@ -460,6 +480,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Request Meeting</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
 
@@ -493,18 +514,22 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Request Meeting</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a student:</h3>
             </div>
             <div id="requestMeeting_teacher_studentList" style="text-align: center; margin-top: 30px;">
             </div>
+            <p style="margin-top: 50px; text-align: center;">
+                <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
+            </p>
         </ons-page>
     </ons-template>
 
 
     <!-- Specify meeting time windows -->
-    
+
     <ons-template id="timeWindows.html">
         <ons-page id="timeWindows">
             <ons-toolbar>
@@ -514,6 +539,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Time Windows</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
 
             <ons-list>
@@ -554,9 +580,9 @@
 
         </ons-page>
     </ons-template>
-    
+
     <!-- Switch active student -->
-    
+
     <ons-template id="switchActiveStudent.html">
         <ons-page id="switchActiveStudent">
             <ons-toolbar id="topBar">
@@ -566,6 +592,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Switch active student</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a student:</h3>
@@ -584,9 +611,9 @@
             </div>
         </ons-page>
     </ons-template>
-    
+
     <!-- Switch active class -->
-    
+
     <ons-template id="switchActiveClass.html">
         <ons-page id="switchActiveClass">
             <ons-toolbar id="topBar">
@@ -596,6 +623,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Switch active class</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a class:</h3>
@@ -614,9 +642,9 @@
             </div>
         </ons-page>
     </ons-template>
-    
+
     <!-- Submit attendance -->
-    
+
     <ons-template id="submitAttendance.html">
         <ons-page id="submitAttendance">
             <ons-toolbar id="topBar">
@@ -626,6 +654,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Submit attendance</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select the absent students only:</h3>
@@ -643,9 +672,9 @@
             </div>
         </ons-page>
     </ons-template>
-    
+
     <!-- Submit grades -->
-    
+
     <ons-template id="submitGrades.html">
         <ons-page id="submitGrades">
             <ons-toolbar id="topBar">
@@ -655,6 +684,7 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center">Submit grades</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Submit grades</h3>
@@ -676,6 +706,44 @@
     </ons-template>
 
 
+    <!-- Absence list -->
+
+    <ons-template id="absenceList.html">
+        <ons-page id="absenceList">
+            <ons-toolbar id="topBar">
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">Absence List</div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
+            </ons-toolbar>
+            <div style="text-align: center; margin-top: 50px;">
+                <h3></h3>
+            </div>
+            <div id="absenceList_studentInput_container" style="text-align: center; margin-top: 10px;">
+
+                <h3>Enter a student ID:</h3>
+                <p>
+                    <ons-input id="absences_studentID_input" modifier="underbar" placeholder="Student ID" float style="width: 70%;"></ons-input>
+                </p>
+
+                <p style="margin-top: 20px;">
+                    <ons-button style="width: 50%;" onclick="fillAbsences()">Submit</ons-button>
+                </p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <div id="absenceList_container" style="text-align: center; margin-top: 30px; overflow: auto">
+                </div>
+                <p style="margin-top: 20px;">
+                    <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
+                </p>
+            </div>
+        </ons-page>
+    </ons-template>
+
+
     <!-- ................... -->
 
     <ons-template id="settings.html">
@@ -689,6 +757,7 @@
                 <div class="center">
                     Settings
                 </div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
         </ons-page>
     </ons-template>
@@ -704,6 +773,7 @@
                 <div class="center">
                     About
                 </div>
+                <div id="activeDisplay" class="right" style="text-align: center"></div>
             </ons-toolbar>
         </ons-page>
     </ons-template>

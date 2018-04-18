@@ -12,24 +12,25 @@
 	background-color: #cccccc;
 }
 
+
 ons-row.gradeTableHead {
     background-color: #cccccc;
     padding: auto; 
     text-align: center;
-    width: 60em;
+    width: 40em;
 }
 
 ons-col.gradeTableHead {
     background-color: #cccccc;
     padding: auto; 
     text-align: center;
-    width: 60em;
+    width: 40em;
 }
 
 .gradeTableItem {
     padding: auto;
     text-align: center;
-    width: 60em;
+    width: 40em;
 }
 
 .gradeTableItem ons-input {
@@ -50,16 +51,20 @@ ons-col {
   color: #999;
 }
 
-ons-list-item {
-	
+ons-list-item.listItem {
+	background-color: #eeeeee;
+    margin-bottom: 4px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-.listItem {
+ons-row.listItem {
 	background-color: inherit;
+
 }
 
 .listItem ons-col {
-	background-color: inherit;
+    background-color: inherit;
 	border-top: none;
 	border-bottom: none;
 	padding: 0px;
@@ -68,11 +73,11 @@ ons-list-item {
 
 .listItem ons-col:first-child {
 	border-left: none;
-	border-right: 1px solid #ccc;
+	border-right: 1px solid #ddd;
 }
 
 .listItem ons-col:last-child {
-	border-left: 1px solid #ccc;
+	border-left: 1px solid #ddd;
 	border-right: none;
 }
 
@@ -88,7 +93,7 @@ ons-list-item {
     border-right: none;
 	border-bottom: 1px solid #000;
 	padding: 0px;
-    margin-bottom: 10px;
+    margin-bottom: 1px;
     color: inherit;
 }
 
@@ -125,3 +130,9 @@ h3 {
     float: right;
 }
 
+#activeDisplay {
+    margin-right: 10px;
+    padding-top: 10px;
+    text-align: left;
+    font-size: 16px;
+}
