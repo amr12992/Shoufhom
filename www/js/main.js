@@ -565,16 +565,30 @@ function meeting_guardian_fillSubjectList() {
     $.post(SERVER_URL + '/getstudentsubjects', request,
         function(data) {
             
+            console.log(data);
+            
             list.innerHTML = '<ons-row class="listHead"><ons-col>Teacher name</ons-col><ons-col>Subject</ons-col></ons-row>';
             
-            for (var i = 0; i < data.length; i++) {
+            for (var i = 0; i < data.teachers.length; i++) {
                 list.innerHTML +=
                     '<ons-list-item class="listItem" onclick="meeting_guardian_goToTimePage(' +
-                    data[i].userID + ',\'' + data[i].fName + '\',\'' + data[i].lName + '\',\'' + data[i].subjectName +
+                    data.teachers[i].userID + ',\'' + data.teachers[i].fName + '\',\'' + data.teachers[i].lName + '\',\'' + data.teachers[i].subjectName +
                     '\')" tappable><ons-row class="listItem"><ons-col>' +
-                    data[i].fName + ' ' + data[i].lName +
+                    data.teachers[i].fName + ' ' + data.teachers[i].lName +
                     '</ons-col><ons-col>' +
-                    data[i].subjectName +
+                    data.teachers[i].subjectName +
+                    '</ons-col></ons-row></ons-list-item>';
+            }
+            
+            list.innerHTML += '<h2 style="text-align: center; margin-top: 20px">Councellors</h2>' +
+                            '<ons-row class="listHead"><ons-col>Councellor name</ons-col></ons-row>';
+            
+            for (var i = 0; i < data.counsellors.length; i++) {
+                list.innerHTML +=
+                    '<ons-list-item class="listItem" onclick="meeting_guardian_goToTimePage(' +
+                    data.counsellors[i].userID + ',\'' + data.counsellors[i].fName + '\',\'' + data.counsellors[i].lName + '\',\'' + data.counsellors[i].subjectName +
+                    '\')" tappable><ons-row class="listItem"><ons-col>' +
+                    data.counsellors[i].fName + ' ' + data.counsellors[i].lName +
                     '</ons-col></ons-row></ons-list-item>';
             }
         }).fail(function(error) {
