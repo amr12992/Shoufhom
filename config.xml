@@ -95,7 +95,7 @@
   <preference name="monaca:AndroidIsPackageNameSeparate" value="true"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="Orientation" value="default"/>
-  <preference name="SplashScreenDelay" value="1000"/>
+  <preference name="SplashScreenDelay" value="0"/>
   <preference name="Fullscreen" value="false"/>
   <preference name="WindowsStorePublisherName" value="My Name"/>
   <preference name="WindowsStoreIdentityName" value="55bd6a7f-3410-775a-b914-f51a5e441752"/>
