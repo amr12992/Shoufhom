@@ -19,15 +19,68 @@ function onDeviceReady() {
     
 }
 
+function setActiveDisplay() {
+    var activeDisplayContainer = document.getElementById('activeDisplayContainer');
+    var userRole = localStorage.getItem('userRole');
+    
+    switch (userRole) {
+        case 'Guardian':
+            var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
+            if (activeStudent) {
+              localStorage.setItem('activeStudentIDDisplay', '<u>ID</u>:' + activeStudent.studentID);
+              localStorage.setItem('activeDisplay', '<u>Active student</u>: ' + activeStudent.fName/* + '<br>ID: ' + activeStudent.studentID*/);
+            }
+            break;
+
+        case 'Teacher':
+            var activeClass = JSON.parse(localStorage.getItem('activeClass'));
+            if (activeClass) localStorage.setItem('activeDisplay', '<u>Active class</u>: ' + activeClass.classNumber);
+            break;
+
+        case 'Counsellor':
+            var activeClass = JSON.parse(localStorage.getItem('activeClass'));
+            if (activeClass) localStorage.setItem('activeDisplay', '<u>Active class</u>: ' + activeClass.classNumber);
+            break;
+    }
+    
+    if (activeDisplayContainer) {
+        var activeDisplay = document.createElement('div');
+        activeDisplay.innerHTML = localStorage.getItem('activeDisplay');
+        activeDisplay.id = 'activeDisplay';
+        activeDisplayContainer.appendChild(activeDisplay);
+        if (userRole == 'Guardian') {
+            var activeStudentID = document.createElement('div');
+            activeStudentID.innerHTML = localStorage.getItem('activeStudentIDDisplay');
+            activeStudentID.id = 'activeStudentID';
+            activeDisplayContainer.appendChild(activeStudentID);
+        }
+        else {
+            activeDisplay.style = 'margin-right: 40px';
+        }
+    }
+    
+    
+}
+
+document.addEventListener('show', function(event) {
+    setActiveDisplay();
+    
+    var page = event.target;
+    
+    if (page.matches('#guardianHome') || page.matches('#teacherHome') || page.matches('#counsellorHome')) {
+        var role = document.createElement('span');
+        role.innerHTML = localStorage.getItem('userRole');
+        role.id = 'topNavTitleRole';
+        document.getElementById('topNavTitle').appendChild(role);
+    }
+});
+
 // This is executed whenever a page initializes
 
 document.addEventListener('init', function(event) {
     var page = event.target;
-    
-    var activeDisplay = document.getElementById('activeDisplay');
-    
-    if (activeDisplay)
-        activeDisplay.innerHTML = localStorage.getItem('activeDisplay');
+
+    //setActiveDisplay();
 
     if (page.matches('#signIn')) {
         if (localStorage.getItem('isSignedIn') == "yes") {
@@ -36,9 +89,6 @@ document.addEventListener('init', function(event) {
             signIn();
         }
     } 
-    else if (page.matches('#guardianHome') || page.matches('#teacherHome') || page.matches('#counsellorHome')) {
-        document.getElementById('activeDisplay').innerHTML = localStorage.getItem('activeDisplay');
-    }
     else if (page.matches('#examTimes'))
         fillExamTimeTable();
     else if (page.matches('#checkUpcomingAppointments'))
@@ -98,20 +148,14 @@ function goToHome() {
 
     switch (userRole) {
         case 'Guardian':
-            var activeStudent = JSON.parse(localStorage.getItem('activeStudent'));
-            if (activeStudent) localStorage.setItem('activeDisplay', 'Active student: ' + activeStudent.fName);
             fn.reset('guardianHome.html');
             break;
 
         case 'Teacher':
-            var activeClass = JSON.parse(localStorage.getItem('activeClass'));
-            if (activeClass) localStorage.setItem('activeDisplay', 'Active class: ' + activeClass.classNumber);
             fn.reset('teacherHome.html');
             break;
 
         case 'Counsellor':
-            var activeClass = JSON.parse(localStorage.getItem('activeClass'));
-            if (activeClass) localStorage.setItem('activeDisplay', 'Active class: ' + activeClass.classNumber);
             fn.reset('counsellorHome.html');
             break;
     }
@@ -167,6 +211,7 @@ function signIn() {
                 checkCloseAppointments();
                 checkActive();
                 goToHome();
+                setActiveDisplay();
                 
                 var menu = document.getElementById('menu');
                 menu.setAttribute('swipeable', '');
@@ -580,8 +625,8 @@ function meeting_guardian_fillSubjectList() {
                     '</ons-col></ons-row></ons-list-item>';
             }
             
-            list.innerHTML += '<h2 style="text-align: center; margin-top: 20px">Councellors</h2>' +
-                            '<ons-row class="listHead"><ons-col>Councellor name</ons-col></ons-row>';
+            list.innerHTML += '<h3 style="text-align: center; margin-top: 20px">Or select a counsellor:</h3>' +
+                            '<ons-row class="listHead"><ons-col>Counsellor name</ons-col></ons-row>';
             
             for (var i = 0; i < data.counsellors.length; i++) {
                 list.innerHTML +=
@@ -1183,6 +1228,8 @@ function fillAbsences() {
     var userRole = localStorage.getItem('userRole');
     var studentIDInput = document.getElementById('absences_studentID_input');
     
+    setActiveDisplay();
+    
     if (userRole == 'Guardian')
         inputContainer.innerHTML = "";
     else if (userRole != 'Guardian' && studentIDInput.value == "")
@@ -1198,7 +1245,7 @@ function fillAbsences() {
         function(data) {
             console.log(data);
             if (data != 'none') {
-                container.innerHTML += '<ons-row class="listHead"><ons-col>Date</ons-col><ons-col>Subject</ons-col></ons-row>';
+                container.innerHTML = '<h2>Absences</h2><ons-row class="listHead"><ons-col>Date</ons-col><ons-col>Subject</ons-col></ons-row>';
                 for (var i = 0; i < data.length; i++) {
                     var tableItemRow = document.createElement('ons-row');
                     //tableItemRow.className = 'gradeTableItem';

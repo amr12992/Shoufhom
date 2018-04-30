@@ -1,7 +1,7 @@
 .mainMenuButton {
 	margin-top: 10px;
 	border-radius: 10px;
-	width: 70%;
+	width: 80%;
     font-size: 18px;
     height: 50px;
     padding-top: 8px;
@@ -9,6 +9,7 @@
 
 .mainMenuButtonList {
 	text-align: center;
+    margin-top: 10px;
 }
 
 .tableHead {
@@ -133,9 +134,39 @@ h3 {
     float: right;
 }
 
-#activeDisplay {
-    margin-right: 10px;
-    padding-top: 10px;
+#activeDisplayContainer {
+    margin-top: -2px;
+    margin-right: -10px;
     text-align: left;
-    font-size: 16px;
+    font-size: 14px;
+    height: 20px;
+    float: right;
+}
+
+#activeDisplay {
+    margin-top: 0px;
+    text-align: inherit;
+    font-size: inherit;
+    height: 20px;
+    float: left;
+}
+
+#activeStudentID {
+    text-align: left;
+    font-size: inherit;
+    height: 20px;
+    float: left;
+}
+
+#topNavTitle {
+    float: left;
+    margin-left: -20px;
+    height: 40px;
+    width: 60%;
+}
+
+#topNavTitleRole {
+    margin-left: -5px;
+    margin-top: 10px;
+    font-size: 8px;
 }

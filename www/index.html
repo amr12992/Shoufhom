@@ -166,23 +166,20 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Shoufhom
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
-            <h1 style="text-align: center; opacity: 0.6">
-                Guardian home
-            </h1>
             <ons-list class="mainMenuButtonList">
                 <ons-button class="mainMenuButton" modifier="large" onclick="initExamTimes()">
                     Exam times
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
-                    Upcoming appointments
+                    Appointments
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="openReportsPage()">
-                    Student grade reports
+                    Grade reports
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="meeting_guardian_init()">
                     Request meeting
@@ -207,20 +204,17 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Shoufhom
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
-            <h1 style="text-align: center; opacity: 0.6">
-                Teacher home
-            </h1>
             <ons-list class="mainMenuButtonList">
                 <ons-button class="mainMenuButton" modifier="large" onclick="initExamTimes()">
                     Exam times
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="fn.load('checkUpcomingAppointments.html')">
-                    Upcoming appointments
+                    Appointments
                 </ons-button>
                 <ons-button class="mainMenuButton" modifier="large" onclick="meeting_teacher_init()">
                     Request meeting
@@ -251,14 +245,11 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Shoufhom
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
-            <h1 style="text-align: center; opacity: 0.6; margin-top: -10px">
-                Counsellor home
-            </h1>
             <ons-list class="mainMenuButtonList">
                 <ons-button class="mainMenuButton" modifier="large" onclick="initExamTimes()">
                     Exam times
@@ -301,10 +292,10 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Exam times
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div id="examTimeTable" style="text-align: center; margin-top: 30px;">
                 <ons-row>
@@ -335,10 +326,10 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Upcoming Appointments
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div id="upcomingAppointmentsTable" style="text-align: center; margin-top: 30px;">
                 <ons-row>
@@ -360,7 +351,7 @@
     </ons-template>
 
 
-    <!-- Access Reports page -- counseller based -->
+    <!-- Access Reports page -->
 
     <ons-template id="reports_page.html">
         <ons-page id="reports_page">
@@ -370,18 +361,19 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Reports
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
-
-            <h4 style=" margin-top: 30px;">Select year:</h4>
-            <ons-select onchange="editSelects(event)" style="text-align: center; margin-top: 1px;width: 70%;">
+            
+            <h3 style="margin-top: 5px;">Select year:</h3>
+            <ons-select onchange="updateReportsTable()" style="text-align: center; margin-top: 1px;width: 40%;">
                 <select id="reportsYearSelect" class="select-input">
                 </select>
             </ons-select>
-            <div id="reportsTable" style="text-align: center; margin-top: 30px; overflow-x: auto; float: ;">
+            <h3 style="text-align: center">Grades</h3>
+            <div id="reportsTableContainer" style="text-align: center; margin-top: 25px; overflow-x: auto; float: ;">
                 <ons-row class = "gradeTableHead">
                     <ons-col class="gradeTableHead">
                         Subject
@@ -408,10 +400,8 @@
                         Final Grade
                     </ons-col>
                 </ons-row>
+                <div id="reportsTable" style="text-align: center;"></div>
             </div>
-            <p style="margin-top: 50px; text-align: center;">
-                <ons-button style="width: 50%;" onclick="updateReportsTable()">Update</ons-button>
-            </p>
             <p style="margin-top: 20px; text-align: center;">
                 <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
             </p>
@@ -427,8 +417,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Access Reports</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Access Reports</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 100px;">
 
@@ -455,15 +445,15 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Request Meeting</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Request Meeting</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
-            <div style="text-align: center; margin-top: 50px;">
+            <div style="text-align: center; margin-top: 10px;">
                 <h3>Select a teacher:</h3>
             </div>
             <div id="requestMeeting_guardian_subjectList" style="text-align: center; margin-top: 30px;">
             </div>
-            <p style="margin-top: 50px; text-align: center;">
+            <p style="margin-top: 20px; text-align: center;">
                 <ons-button style="width: 50%;" onclick="goToHome()">Back</ons-button>
             </p>
         </ons-page>
@@ -479,20 +469,17 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Request Meeting</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Request Meeting</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
 
                 <h3>Select a date:</h3>
                 <p>
-                    <ons-input id="requestMeeting_guardian_dateInput" type="date" modifier="underbar" placeholder="Date" float style="width: 70%;"></ons-input>
+                    <ons-input id="requestMeeting_guardian_dateInput" onchange="meeting_checkDate()" type="date" placeholder="Date" modifier="underbar" float style="width: 70%;"></ons-input>
                 </p>
 
                 <div id="requestMeeting_timeContainer" style="text-align: center; margin-top: 50px;">
-                    <p style="margin-top: 70px;">
-                        <ons-button style="width: 50%;" onclick="meeting_checkDate()">Check date</ons-button>
-                    </p>
                 </div>
 
                 <p style="margin-top: 20px;">
@@ -513,8 +500,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Request Meeting</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Request Meeting</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a student:</h3>
@@ -538,8 +525,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Time Windows</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Time Windows</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
 
             <ons-list>
@@ -591,8 +578,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Switch active student</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Switch active student</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a student:</h3>
@@ -622,8 +609,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Switch active class</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Switch active class</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select a class:</h3>
@@ -653,8 +640,9 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Submit attendance</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Submit attendance</div>
+                <div id="activeDisplayContainer" class="right"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Select the absent students only:</h3>
@@ -683,8 +671,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Submit grades</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Submit grades</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3>Submit grades</h3>
@@ -716,8 +704,8 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">Absence List</div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div class="center" id="topNavTitle">Absence List</div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
             <div style="text-align: center; margin-top: 50px;">
                 <h3></h3>
@@ -754,10 +742,10 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     Settings
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
         </ons-page>
     </ons-template>
@@ -770,10 +758,10 @@
                         <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
                     </ons-toolbar-button>
                 </div>
-                <div class="center">
+                <div class="center" id="topNavTitle">
                     About
                 </div>
-                <div id="activeDisplay" class="right" style="text-align: center"></div>
+                <div id="activeDisplayContainer" class="right"></div>
             </ons-toolbar>
         </ons-page>
     </ons-template>
